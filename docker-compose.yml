@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest  # Usa a imagem mais recente do PostgreSQL
+    environment:
+      POSTGRES_USER: educablog             # Nome do usuário do banco de dados
+      POSTGRES_PASSWORD: 123456    # Senha do usuário
+      POSTGRES_DB: educablog                 # Nome do banco de dados a ser criado
+    ports:
+      - "5432:5432"  # Mapeia a porta padrão do PostgreSQL
+    volumes:
+        - db_data:/var/lib/postgresql/data
+        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:  # Define um volume nomeado para persistir os dados do banco de dados
