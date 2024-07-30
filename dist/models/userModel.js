@@ -12,25 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = __importDefault(require("../config/database"));
+const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const prisma = new client_1.PrismaClient();
 class UserModel {
     static create(username, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
-            yield database_1.default.query('INSERT INTO users (username, password) VALUES ($1, $2)', [username, hashedPassword]);
+            yield prisma.user.create({
+                data: {
+                    username,
+                    password: hashedPassword,
+                },
+            });
         });
     }
     static findByUsername(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield database_1.default.query('SELECT id, username, password FROM users WHERE username = $1', [username]);
-            return result.rows.length > 0 ? result.rows[0] : null;
+            return prisma.user.findUnique({
+                where: { username },
+            });
         });
     }
     static findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield database_1.default.query('SELECT id, username FROM users');
-            return result.rows;
+            return prisma.user.findMany();
         });
     }
 }

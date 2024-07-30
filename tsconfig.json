@@ -10,10 +10,9 @@
     "rootDir": "./src"
   },
   "include": [
-    "src/**/*", "tests/**/*",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts"
+    "src/**/*",
+    "tests/**/*",
+    "node_modules/ts-jest/globals.d.ts"
   ],
   "exclude": ["node_modules"]
 }

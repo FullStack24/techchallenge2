@@ -4,19 +4,16 @@ exports.validatePost = exports.postValidationRules = void 0;
 const express_validator_1 = require("express-validator");
 const postValidationRules = () => {
     return [
-        (0, express_validator_1.body)('title').notEmpty().withMessage('O título é obrigatório.'),
-        (0, express_validator_1.body)('content').notEmpty().withMessage('O conteúdo é obrigatório.'),
-        (0, express_validator_1.body)('author').notEmpty().withMessage('O autor é obrigatório.')
+        (0, express_validator_1.check)("title").notEmpty().withMessage("Title is required"),
+        (0, express_validator_1.check)("content").notEmpty().withMessage("Content is required"),
     ];
 };
 exports.postValidationRules = postValidationRules;
 const validatePost = (req, res, next) => {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        return res.status(422).json({ errors: errors.array() });
     }
-    else {
-        next();
-    }
+    next();
 };
 exports.validatePost = validatePost;

@@ -12,37 +12,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const postModel_1 = __importDefault(require("../models/postModel"));
+const postRepository_1 = __importDefault(require("../repositories/postRepository"));
 class PostService {
+    constructor(postRepository) {
+        this.postRepository = postRepository;
+    }
     createPost(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return postModel_1.default.create(data);
+            return this.postRepository.create(data);
         });
     }
     getAllPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            return postModel_1.default.findAll();
+            return this.postRepository.findAll();
         });
     }
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return postModel_1.default.findById(id);
+            return this.postRepository.findById(id);
         });
     }
     updatePost(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return postModel_1.default.update(id, data);
+            return this.postRepository.update(id, data);
         });
     }
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield postModel_1.default.delete(id);
+            yield this.postRepository.delete(id);
         });
     }
     searchPosts(keyword) {
         return __awaiter(this, void 0, void 0, function* () {
-            return postModel_1.default.search(keyword);
+            return this.postRepository.search(keyword);
         });
     }
 }
-exports.default = new PostService();
+exports.default = new PostService(postRepository_1.default);

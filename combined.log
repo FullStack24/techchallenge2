@@ -11,3 +11,5 @@
 {"level":"error","message":"Erro ao criar post: role \"educablog\" does not exist","timestamp":"2024-07-24T02:34:48.779Z"}
 {"level":"error","message":"Erro ao criar post: role \"educablog\" does not exist","timestamp":"2024-07-24T02:39:11.615Z"}
 {"level":"error","message":"Erro ao criar post: role \"educablog\" does not exist","timestamp":"2024-07-24T02:58:26.273Z"}
+{"level":"error","message":"Erro ao criar post: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string","timestamp":"2024-07-30T14:05:59.289Z"}
+{"level":"error","message":"Erro ao criar post: relation \"posts\" does not exist","timestamp":"2024-07-30T14:32:45.703Z"}

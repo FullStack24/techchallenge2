@@ -1,13 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { AppError } from "../errors/AppError";
+import { AuthenticatedRequest, JwtPayload } from "../interfaces/JwtPayload";
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers['authorization'];
+const authMiddleware = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const authHeader = req.header("Authorization");
+  const token = authHeader ? authHeader.replace(/^Bearer\s/, "") : "";
 
-  if (!token || token !== 'Bearer seu_token_aqui') {
-    return res.status(403).json({ message: 'Acesso negado. Usuário não autorizado.' });
+  if (!token) {
+    throw new AppError("Acesso negado. Token não fornecido.", 401);
   }
 
-  next();
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "seu_secret_key",
+    ) as JwtPayload;
+    req.user = decoded;
+    next();
+  } catch (err) {
+    throw new AppError("Token inválido.", 401);
+  }
 };
 
 export default authMiddleware;

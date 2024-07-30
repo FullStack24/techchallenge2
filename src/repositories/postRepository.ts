@@ -1,60 +1,83 @@
-import db from '../config/database';
-import { IPost } from '../interfaces/IPost';
+import { PrismaClient, Prisma } from "@prisma/client";
+import { IPost } from "../interfaces/IPost";
 
-class PostRepository {
+const prisma = new PrismaClient();
+
+const PostRepository = {
   async create(data: IPost): Promise<IPost> {
     const { title, content, author } = data;
-    const result = await db.query(
-      'INSERT INTO posts (title, content, author, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *',
-      [title, content, author]
-    );
-    return result.rows[0] as IPost; // Asserindo que o retorno é um IPost
-  }
+    const result = await prisma.post.create({
+      data: {
+        title,
+        content,
+        author,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+    return result as IPost;
+  },
 
   async findAll(): Promise<IPost[]> {
-    const result = await db.query('SELECT * FROM posts');
-    return result.rows.map(row => ({
+    const result = await prisma.post.findMany();
+    return result.map((row) => ({
       id: row.id,
       title: row.title,
       content: row.content,
       author: row.author,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
     })) as IPost[];
-  }
+  },
 
   async findById(id: number): Promise<IPost | null> {
-    const result = await db.query('SELECT * FROM posts WHERE id = $1', [id]);
-    return result.rows.length > 0 ? (result.rows[0] as IPost) : null;
-  }
+    const result = await prisma.post.findUnique({
+      where: { id },
+    });
+    return result ? (result as IPost) : null;
+  },
 
   async update(id: number, data: Partial<IPost>): Promise<IPost | null> {
     const { title, content } = data;
-    const result = await db.query(
-      'UPDATE posts SET title = $1, content = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
-      [title, content, id]
-    );
-    return result.rows.length > 0 ? (result.rows[0] as IPost) : null;
-  }
+    const result = await prisma.post.update({
+      where: { id },
+      data: {
+        title,
+        content,
+        updatedAt: new Date(),
+      },
+    });
+    return result ? (result as IPost) : null;
+  },
 
   async delete(id: number): Promise<void> {
-    await db.query('DELETE FROM posts WHERE id = $1', [id]);
-  }
+    await prisma.post.delete({
+      where: { id },
+    });
+  },
 
   async search(keyword: string): Promise<IPost[]> {
-    const result = await db.query(
-      'SELECT * FROM posts WHERE title ILIKE $1 OR content ILIKE $1',
-      [`%${keyword}%`]
-    );
-    return result.rows.map(row => ({
+    const result = await prisma.post.findMany({
+      where: {
+        OR: [
+          { title: { contains: keyword, mode: "insensitive" } },
+          { content: { contains: keyword, mode: "insensitive" } },
+        ],
+      },
+    });
+    return result.map((row) => ({
       id: row.id,
       title: row.title,
       content: row.content,
       author: row.author,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
     })) as IPost[];
-  }
-}
+  },
 
-export default new PostRepository();
+  async customQuery<T>(query: Prisma.Sql, params: T[]): Promise<T[]> {
+    return prisma.$queryRaw<T[]>(query, ...params);
+  },
+};
+
+export default PostRepository;

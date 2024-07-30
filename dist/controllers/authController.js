@@ -12,25 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.register = exports.login = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const userModel_1 = __importDefault(require("../models/userModel"));
-const AppError_1 = require("../errors/AppError");
-const authController = {
-    login: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { username, password } = req.body;
-        const user = yield userModel_1.default.findByUsername(username);
-        if (!user) {
-            throw new AppError_1.AppError('Usuário não encontrado', 404);
-        }
-        const isMatch = yield bcryptjs_1.default.compare(password, user.password);
-        if (!isMatch) {
-            throw new AppError_1.AppError('Senha incorreta', 401);
-        }
-        const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET || 'seu_secret_key', {
-            expiresIn: '1h', // O token expira em 1 hora
-        });
-        res.json({ token });
-    })
-};
-exports.default = authController;
+const userService_1 = __importDefault(require("../services/userService"));
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = req.body;
+    const user = yield userService_1.default.validateUser(username, password);
+    if (!user) {
+        return res.status(401).json({ message: "Credenciais inválidas" });
+    }
+    const token = jsonwebtoken_1.default.sign({ userId: user.id }, process.env.JWT_SECRET || "mySuperSecretKey12345!", { expiresIn: "1h" });
+    return res.status(200).json({ token });
+});
+exports.login = login;
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = req.body;
+    const newUser = yield userService_1.default.createUser(username, password);
+    if (!newUser) {
+        return res.status(400).json({ message: "Erro ao criar usuário" });
+    }
+    return res.status(201).json({ message: "Usuário criado com sucesso" });
+});
+exports.register = register;

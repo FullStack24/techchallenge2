@@ -1,29 +1,33 @@
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import UserModel from '../models/userModel';
-import { AppError } from '../errors/AppError';
+import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import userService from "../services/userService";
 
-const authController = {
-  login: async (req: Request, res: Response): Promise<void> => {
-    const { username, password } = req.body;
+const login = async (req: Request, res: Response) => {
+  const { username, password } = req.body;
 
-    const user = await UserModel.findByUsername(username);
-    if (!user) {
-      throw new AppError('Usuário não encontrado', 404);
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      throw new AppError('Senha incorreta', 401);
-    }
-
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'seu_secret_key', {
-      expiresIn: '1h',
-    });
-
-    res.json({ token });
+  const user = await userService.validateUser(username, password);
+  if (!user) {
+    return res.status(401).json({ message: "Credenciais inválidas" });
   }
+
+  const token = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET || "mySuperSecretKey12345!",
+    { expiresIn: "1h" },
+  );
+
+  return res.status(200).json({ token });
 };
 
-export default authController;
+const register = async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  const newUser = await userService.createUser(username, password);
+  if (!newUser) {
+    return res.status(400).json({ message: "Erro ao criar usuário" });
+  }
+
+  return res.status(201).json({ message: "Usuário criado com sucesso" });
+};
+
+export { login, register };

@@ -14,23 +14,23 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use(express_1.default.json());
-app.use('/api', postRoutes_1.default);
-app.use('/api', authRoutes_1.default);
+app.use("/api", postRoutes_1.default);
+app.use("/api", authRoutes_1.default);
 app.use(errorHandler_1.default);
 // Configuração do Swagger
 const swaggerOptions = {
     swaggerDefinition: {
-        openapi: '3.0.0',
+        openapi: "3.0.0",
         info: {
-            title: 'Blogging API',
-            version: '1.0.0',
-            description: 'API para gerenciamento de posts de blogging',
+            title: "Blogging API",
+            version: "1.0.0",
+            description: "API para gerenciamento de posts de blogging",
         },
     },
-    apis: ['./src/routes/*.ts'],
+    apis: ["./src/routes/*.ts"],
 };
 const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
+app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
