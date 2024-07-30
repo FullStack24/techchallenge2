@@ -25,6 +25,10 @@ describe("PostService", () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+  const postsMock: IPost[] = [
+    { id: '1', title: "Post 1", content: "Content 1", author: "Author 1", createdAt: new Date(), updatedAt: new Date() },
+    { id: '2', title: "Post 2", content: "Content 2", author: "Author 2", createdAt: new Date(), updatedAt: new Date() }
+  ];
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -67,5 +71,22 @@ describe("PostService", () => {
 
     await PostService.deletePost('1');
     expect(PostRepository.delete).toHaveBeenCalledWith('1');
+  });
+
+  it("deve buscar posts por keyword", async () => {
+    const keyword = 'test';
+    (PostRepository.search as jest.Mock).mockResolvedValue(postsMock);
+
+    const result = await PostService.searchPosts(keyword);
+    expect(result).toEqual(postsMock);
+    expect(PostRepository.search).toHaveBeenCalledWith(keyword);
+  });
+
+  it("deve obter todos os posts", async () => {
+    (PostRepository.findAll as jest.Mock).mockResolvedValue(postsMock);
+
+    const result = await PostService.getAllPosts();
+    expect(result).toEqual(postsMock);
+    expect(PostRepository.findAll).toHaveBeenCalled();
   });
 });
