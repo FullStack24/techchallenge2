@@ -3,52 +3,75 @@ import PostService from "../services/postService";
 
 const createPost = async (req: Request, res: Response) => {
   const { title, content, author } = req.body;
-  const post = await PostService.createPost({ title, content, author });
-  res.status(201).json(post);
+  try {
+    const post = await PostService.createPost({ title, content, author });
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao criar postagem" });
+  }
 };
 
 const getPostById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const post = await PostService.getPostById(Number(id));
-  if (post) {
-    res.status(200).json(post);
-  } else {
-    res.status(404).json({ message: "Postagem não encontrada" });
+  try {
+    const post = await PostService.getPostById(id);
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: "Postagem não encontrada" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar postagem" });
   }
 };
 
 const updatePost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, content } = req.body;
-  const post = await PostService.updatePost(Number(id), { title, content });
-  if (post) {
-    res.status(200).json(post);
-  } else {
-    res.status(404).json({ message: "Postagem não encontrada" });
+  try {
+    const post = await PostService.updatePost(id, { title, content });
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: "Postagem não encontrada" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar postagem" });
   }
 };
 
 const deletePost = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const post = await PostService.getPostById(Number(id));
-
-  if (post) {
-    await PostService.deletePost(Number(id));
-    res.status(200).json({ message: "Postagem excluída com sucesso" });
-  } else {
-    res.status(404).json({ message: "Postagem não encontrada" });
+  try {
+    const post = await PostService.getPostById(id);
+    if (post) {
+      await PostService.deletePost(id);
+      res.status(200).json({ message: "Postagem excluída com sucesso" });
+    } else {
+      res.status(404).json({ message: "Postagem não encontrada" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao excluir postagem" });
   }
 };
 
 const searchPosts = async (req: Request, res: Response) => {
   const { keyword } = req.query;
-  const posts = await PostService.searchPosts(keyword as string);
-  res.status(200).json(posts);
+  try {
+    const posts = await PostService.searchPosts(keyword as string);
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar postagens" });
+  }
 };
 
 const getAllPosts = async (req: Request, res: Response) => {
-  const posts = await PostService.getAllPosts();
-  res.status(200).json(posts);
+  try {
+    const posts = await PostService.getAllPosts();
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar postagens" });
+  }
 };
 
 export {

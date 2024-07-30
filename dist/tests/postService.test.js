@@ -30,7 +30,7 @@ describe("PostService", () => {
         content: "Test Content",
         author: "Test Author",
     };
-    const createdPostMock = Object.assign(Object.assign({ id: 1 }, newPost), { createdAt: new Date(), updatedAt: new Date() });
+    const createdPostMock = Object.assign(Object.assign({ id: '1' }, newPost), { createdAt: new Date(), updatedAt: new Date() });
     beforeEach(() => {
         jest.resetAllMocks();
     });
@@ -42,24 +42,24 @@ describe("PostService", () => {
     }));
     it("deve obter um post por ID", () => __awaiter(void 0, void 0, void 0, function* () {
         postRepository_1.default.findById.mockResolvedValue(createdPostMock);
-        const foundPost = yield postService_1.default.getPostById(1);
+        const foundPost = yield postService_1.default.getPostById('1');
         expect(foundPost).toEqual(createdPostMock);
-        expect(postRepository_1.default.findById).toHaveBeenCalledWith(1);
+        expect(postRepository_1.default.findById).toHaveBeenCalledWith('1');
     }));
     it("deve atualizar um post", () => __awaiter(void 0, void 0, void 0, function* () {
         const updatedPostMock = Object.assign(Object.assign({}, createdPostMock), { title: "Updated Title" });
         postRepository_1.default.update.mockResolvedValue(updatedPostMock);
-        const updatedPost = yield postService_1.default.updatePost(1, {
+        const updatedPost = yield postService_1.default.updatePost('1', {
             title: "Updated Title",
         });
         expect(updatedPost).toEqual(updatedPostMock);
-        expect(postRepository_1.default.update).toHaveBeenCalledWith(1, {
+        expect(postRepository_1.default.update).toHaveBeenCalledWith('1', {
             title: "Updated Title",
         });
     }));
     it("deve deletar um post", () => __awaiter(void 0, void 0, void 0, function* () {
         postRepository_1.default.delete.mockResolvedValue(undefined);
-        yield postService_1.default.deletePost(1);
+        yield postService_1.default.deletePost('1');
         expect(postRepository_1.default.delete).toHaveBeenCalledWith(1);
     }));
 });

@@ -1,41 +1,27 @@
-import express from "express";
-import postRoutes from "./routes/postRoutes";
-import authRoutes from "./routes/authRoutes";
-import dotenv from "dotenv";
-import swaggerUi from "swagger-ui-express";
-import swaggerJsDoc from "swagger-jsdoc";
-import errorHandler from "./middlewares/errorHandler";
-
-dotenv.config();
+import 'dotenv/config';
+import express from 'express';
+import postRoutes from './routes/postRoutes';
+import authRoutes from './routes/authRoutes';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs'; // Corrija a importação para yamljs
+import errorHandler from './middlewares/errorHandler';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use("/api", postRoutes);
-app.use("/api", authRoutes);
+// Roteamento
+app.use('/api/posts', postRoutes);
+app.use('/api/auth', authRoutes);
 
+// Middleware de manejo de erros
 app.use(errorHandler);
 
 // Configuração do Swagger
-const swaggerOptions = {
-  swaggerDefinition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Blogging API",
-      version: "1.0.0",
-      description: "API para gerenciamento de posts de blogging",
-    },
-  },
-  apis: ["./src/routes/*.ts"],
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const swaggerDocument = YAML.load('./swagger.yaml'); // Corrija a chamada para YAML.load
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-export default app;

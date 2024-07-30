@@ -13,20 +13,20 @@ const PostModel = {
     return prisma.post.findMany();
   },
 
-  findById: async (id: number) => {
+  findById: async (id: string) => {
     return prisma.post.findUnique({
       where: { id },
     });
   },
 
-  update: async (id: number, data: Prisma.PostUpdateInput) => {
+  update: async (id: string, data: Prisma.PostUpdateInput) => {
     return prisma.post.update({
       where: { id },
       data,
     });
   },
 
-  delete: async (id: number) => {
+  delete: async (id: string) => {
     await prisma.post.delete({
       where: { id },
     });

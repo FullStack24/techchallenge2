@@ -11,9 +11,9 @@ const login = async (req: Request, res: Response) => {
   }
 
   const token = jwt.sign(
-    { userId: user.id },
-    process.env.JWT_SECRET || "mySuperSecretKey12345!",
-    { expiresIn: "1h" },
+      { userId: user.id },
+      process.env.JWT_SECRET || "mySuperSecretKey12345!",
+      { expiresIn: "1h" }
   );
 
   return res.status(200).json({ token });

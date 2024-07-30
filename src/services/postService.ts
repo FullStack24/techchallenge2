@@ -16,15 +16,15 @@ class PostService {
     return this.postRepository.findAll();
   }
 
-  async getPostById(id: number): Promise<IPost | null> {
+  async getPostById(id: string): Promise<IPost | null> {
     return this.postRepository.findById(id);
   }
 
-  async updatePost(id: number, data: Partial<IPost>): Promise<IPost | null> {
+  async updatePost(id: string, data: Partial<IPost>): Promise<IPost | null> {
     return this.postRepository.update(id, data);
   }
 
-  async deletePost(id: number): Promise<void> {
+  async deletePost(id: string): Promise<void> {
     await this.postRepository.delete(id);
   }
 

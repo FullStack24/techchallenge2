@@ -22,7 +22,7 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createPost = createPost;
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const post = yield postService_1.default.getPostById(Number(id));
+    const post = yield postService_1.default.getPostById((id));
     if (post) {
         res.status(200).json(post);
     }
@@ -34,7 +34,7 @@ exports.getPostById = getPostById;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { title, content } = req.body;
-    const post = yield postService_1.default.updatePost(Number(id), { title, content });
+    const post = yield postService_1.default.updatePost((id), { title, content });
     if (post) {
         res.status(200).json(post);
     }
@@ -45,9 +45,9 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.updatePost = updatePost;
 const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const post = yield postService_1.default.getPostById(Number(id));
+    const post = yield postService_1.default.getPostById((id));
     if (post) {
-        yield postService_1.default.deletePost(Number(id));
+        yield postService_1.default.deletePost((id));
         res.status(200).json({ message: "Postagem excluída com sucesso" });
     }
     else {

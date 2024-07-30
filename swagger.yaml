@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Blogging API
+  version: 1.0.0
+  description: API para gerenciamento de posts de blogging
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /posts:
+    get:
+      summary: "Lista todos os posts"
+      description: "Retorna uma lista de todos os posts."
+      responses:
+        200:
+          description: "Lista de posts"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "12345"
+                    title:
+                      type: string
+                      example: "Título do Post"
+                    content:
+                      type: string
+                      example: "Conteúdo do post..."
+    post:
+      summary: "Cria um novo post"
+      description: "Cria um novo post no sistema."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Título do Novo Post"
+                content:
+                  type: string
+                  example: "Conteúdo do novo post..."
+      responses:
+        201:
+          description: "Post criado com sucesso"
+        400:
+          description: "Dados inválidos fornecidos"
+  /posts/{id}:
+    get:
+      summary: "Obtém um post por ID"
+      description: "Retorna um post específico baseado no ID fornecido."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do post a ser retornado"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Post encontrado"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "12345"
+                  title:
+                    type: string
+                    example: "Título do Post"
+                  content:
+                    type: string
+                    example: "Conteúdo do post..."
+        404:
+          description: "Post não encontrado"
+    put:
+      summary: "Atualiza um post existente"
+      description: "Atualiza um post existente baseado no ID fornecido."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do post a ser atualizado"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Título Atualizado do Post"
+                content:
+                  type: string
+                  example: "Conteúdo atualizado do post..."
+      responses:
+        200:
+          description: "Post atualizado com sucesso"
+        400:
+          description: "Dados inválidos fornecidos"
+        404:
+          description: "Post não encontrado"
+    delete:
+      summary: "Deleta um post existente"
+      description: "Remove um post do sistema baseado no ID fornecido."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do post a ser deletado"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Post deletado com sucesso"
+        404:
+          description: "Post não encontrado"
+  /auth/login:
+    post:
+      summary: "Realiza login"
+      description: "Autentica um usuário e retorna um token JWT."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "usuario"
+                password:
+                  type: string
+                  example: "senha"
+      responses:
+        200:
+          description: "Token JWT retornado com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        401:
+          description: "Credenciais inválidas"
+  /auth/register:
+    post:
+      summary: "Registra um novo usuário"
+      description: "Cria um novo usuário no sistema."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "novoUsuario"
+                password:
+                  type: string
+                  example: "novaSenha"
+      responses:
+        201:
+          description: "Usuário criado com sucesso"
+        400:
+          description: "Erro ao criar usuário"

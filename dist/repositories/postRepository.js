@@ -14,14 +14,12 @@ const prisma = new client_1.PrismaClient();
 const PostRepository = {
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, content, author } = data;
+            const { title, content = '', author } = data; // Definir conteúdo padrão como uma string vazia
             const result = yield prisma.post.create({
                 data: {
                     title,
                     content,
                     author,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
                 },
             });
             return result;
@@ -50,7 +48,7 @@ const PostRepository = {
     },
     update(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, content } = data;
+            const { title, content = '' } = data; // Definir conteúdo padrão como uma string vazia
             const result = yield prisma.post.update({
                 where: { id },
                 data: {

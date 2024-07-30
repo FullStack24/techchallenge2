@@ -22,6 +22,9 @@ const UserRepository = {
                 select: {
                     id: true,
                     username: true,
+                    password: true,
+                    createdAt: true,
+                    updatedAt: true,
                 },
             });
         });
@@ -33,6 +36,9 @@ const UserRepository = {
                 select: {
                     id: true,
                     username: true,
+                    password: true,
+                    createdAt: true,
+                    updatedAt: true,
                 },
             });
         });
@@ -47,6 +53,9 @@ const UserRepository = {
                 select: {
                     id: true,
                     username: true,
+                    password: true,
+                    createdAt: true,
+                    updatedAt: true,
                 },
             });
         });

@@ -1,29 +1,24 @@
-import { Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { AppError } from "../errors/AppError";
-import { AuthenticatedRequest, JwtPayload } from "../interfaces/JwtPayload";
+import {NextFunction, Request, Response} from 'express';
+import jwt, {JwtPayload} from 'jsonwebtoken';
 
-const authMiddleware = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const authHeader = req.header("Authorization");
-  const token = authHeader ? authHeader.replace(/^Bearer\s/, "") : "";
-
-  if (!token) {
-    throw new AppError("Acesso negado. Token não fornecido.", 401);
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const authorization = req.headers['authorization'];
+  if (!authorization) {
+    return res.sendStatus(401);
   }
 
+  const token = authorization.startsWith('Bearer ') ? authorization.slice(7) : null;
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  const secret = process.env.JWT_SECRET || 'your_secret_key';
+
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "seu_secret_key",
-    ) as JwtPayload;
-    req.user = decoded;
+    (req as any).user = jwt.verify(token, secret) as JwtPayload;
     next();
   } catch (err) {
-    throw new AppError("Token inválido.", 401);
+    return res.sendStatus(401);
   }
 };
 

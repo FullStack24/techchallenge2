@@ -20,7 +20,7 @@ describe("PostService", () => {
     author: "Test Author",
   };
   const createdPostMock: IPost = {
-    id: 1,
+    id: '1',
     ...newPost,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -41,9 +41,9 @@ describe("PostService", () => {
   it("deve obter um post por ID", async () => {
     (PostRepository.findById as jest.Mock).mockResolvedValue(createdPostMock);
 
-    const foundPost = await PostService.getPostById(1);
+    const foundPost = await PostService.getPostById('1');
     expect(foundPost).toEqual(createdPostMock);
-    expect(PostRepository.findById).toHaveBeenCalledWith(1);
+    expect(PostRepository.findById).toHaveBeenCalledWith('1');
   });
 
   it("deve atualizar um post", async () => {
@@ -53,11 +53,11 @@ describe("PostService", () => {
     };
     (PostRepository.update as jest.Mock).mockResolvedValue(updatedPostMock);
 
-    const updatedPost = await PostService.updatePost(1, {
+    const updatedPost = await PostService.updatePost('1', {
       title: "Updated Title",
     });
     expect(updatedPost).toEqual(updatedPostMock);
-    expect(PostRepository.update).toHaveBeenCalledWith(1, {
+    expect(PostRepository.update).toHaveBeenCalledWith('1', {
       title: "Updated Title",
     });
   });
@@ -65,7 +65,7 @@ describe("PostService", () => {
   it("deve deletar um post", async () => {
     (PostRepository.delete as jest.Mock).mockResolvedValue(undefined);
 
-    await PostService.deletePost(1);
-    expect(PostRepository.delete).toHaveBeenCalledWith(1);
+    await PostService.deletePost('1');
+    expect(PostRepository.delete).toHaveBeenCalledWith('1');
   });
 });
