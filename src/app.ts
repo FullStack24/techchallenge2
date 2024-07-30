@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import errorHandler from './middlewares/errorHandler';
+import { authMiddleware } from './middlewares';
 
 dotenv.config();
 
@@ -12,9 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use('/api/auth', authRoutes);
 
-app.use('/api', postRoutes);
-app.use('/api', authRoutes);
+app.use(authMiddleware);
+app.use('/api/posts', postRoutes);
 
 app.use(errorHandler);
 
