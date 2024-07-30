@@ -10,15 +10,15 @@ class PostService {
     return PostRepository.findAll(); // Chama o método do repositório
   }
 
-  async getPostById(id: number): Promise<IPost | null> {
+  async getPostById(id: string): Promise<IPost | null> {
     return PostRepository.findById(id); // Chama o método do repositório
   }
 
-  async updatePost(id: number, data: Partial<IPost>): Promise<IPost | null> {
+  async updatePost(id: string, data: Partial<IPost>): Promise<IPost | null> {
     return PostRepository.update(id, data); // Chama o método do repositório
   }
 
-  async deletePost(id: number): Promise<void> {
+  async deletePost(id: string): Promise<void> {
     await PostRepository.delete(id); // Chama o método do repositório
   }
 
