@@ -11,75 +11,87 @@ Uma aplicação de blogging para professores da rede pública de educação, per
    git clone https://github.com/seu-usuario/educa_blog_nodejs.git
    cd educa_blog_nodejs
    ```
-   
 2. Instale as dependências:
-    ```bash
-    npm install
-    ```
+
+   ```bash
+   npm install
+   ```
 
 3. Configure as variáveis de ambiente:
-Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
-    ```bash
-    DB_NAME=educablog
-    DB_USER=educablog
-    DB_PASSWORD=123456
-    DB_HOST=localhost
-    DB_PORT=5432
-    JWT_SECRET=mySuperSecretKey12345!
-    ```
+   Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
+   `bash
+   JWT_SECRET=mySuperSecretKey12345!
+   DATABASE_URL="postgresql://user:123456@localhost:5432/educablog"
+`
 
-4. Inicie a aplicação:
-    ```bash
-    npm start
-    ```
+4. Inicie o banco de dados com o Docker:
+
+```bash
+docker run --name mypostgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=123456 -d -p 5432:5432 postgres:latest
+```
+
+5. Faça a conexão com o banco de dados no Docker, com o auxílio do Prisma:
+
+```bash
+  npx prisma generate client
+  npx prisma db push
+```
+
+6. Inicie a aplicação:
+   ```bash
+   npm start
+   ```
 
 # Arquitetura da Aplicação
 
-* server.ts: Arquivo principal que configura o servidor Express e a conexão com o MongoDB.
-* src/
-  * controllers/: Contém os controladores para manipulação das operações de CRUD.
-  * models/: Contém os modelos de dados.
-  * interfaces/: Contém as definições das interfaces.
-  * repositories/: Contém a lógica de acesso a dados.
-  * services/: Contém a lógica de negócios.
-  * routes/: Contém as definições de rotas.
-  * middlewares/: Contém os middlewares de autenticação e validação.
-  * errors/: Contém a classe de erro personalizada.
+- server.ts: Arquivo principal que configura o servidor Express e a conexão com o MongoDB.
+- src/
+  - controllers/: Contém os controladores para manipulação das operações de CRUD.
+  - models/: Contém os modelos de dados.
+  - interfaces/: Contém as definições das interfaces.
+  - repositories/: Contém a lógica de acesso a dados.
+  - services/: Contém a lógica de negócios.
+  - routes/: Contém as definições de rotas.
+  - middlewares/: Contém os middlewares de autenticação e validação.
+  - errors/: Contém a classe de erro personalizada.
 
 # Guia de Uso das APIs
 
 ### Endpoints
 
-* **GET /api/posts**: Lista todos os posts.
-* **GET /api/posts/:id**: Obtém um post por ID.
-* **POST /api/posts**: Cria um novo post (Requer autenticação).
-* **PUT /api/posts/:id**: Atualiza um post existente (Requer autenticação).
-* **DELETE /api/posts/:id**: Exclui um post (Requer autenticação).
-* **GET /api/posts/search?q=palavra-chave**: Busca posts por palavra-chave.
+- **GET /api/posts**: Lista todos os posts.
+- **GET /api/posts/:id**: Obtém um post por ID.
+- **POST /api/posts**: Cria um novo post (Requer autenticação).
+- **PUT /api/posts/:id**: Atualiza um post existente (Requer autenticação).
+- **DELETE /api/posts/:id**: Exclui um post (Requer autenticação).
+- **GET /api/posts/search?q=palavra-chave**: Busca posts por palavra-chave.
 
 ### Exemplos de Requisição e Resposta
 
 ### GET /api/posts
+
 ```http
 GET /api/posts HTTP/1.1
 Host: localhost:3000
 ```
 
 ### Resposta:
+
 ```json
 [
-    {
-      "id": 1,
-      "title": "Primeiro Post",
-      "content": "Este é o conteúdo do primeiro post.",
-      "author": "Professor João",
-      "createdAt": "2023-10-12T12:59:26.123Z",
-      "updatedAt": "2023-10-12T12:59:26.123Z"
-    }
+  {
+    "id": 1,
+    "title": "Primeiro Post",
+    "content": "Este é o conteúdo do primeiro post.",
+    "author": "Professor João",
+    "createdAt": "2023-10-12T12:59:26.123Z",
+    "updatedAt": "2023-10-12T12:59:26.123Z"
+  }
 ]
 ```
 
 ### POST /api/posts
+
 ```http
 POST /api/posts HTTP/1.1
 Host: localhost:3000
@@ -94,37 +106,40 @@ x-auth-token: seu_token_jwt
 ```
 
 ### Resposta:
+
 ```json
-    {
-          "id": 2,
-          "title": "Novo Post",
-          "content": "Conteúdo do novo post.",
-          "author": "Professor Maria",
-          "createdAt": "2023-10-12T12:59:26.123Z",
-          "updatedAt": "2023-10-12T12:59:26.123Z"
-    }
+{
+  "id": 2,
+  "title": "Novo Post",
+  "content": "Conteúdo do novo post.",
+  "author": "Professor Maria",
+  "createdAt": "2023-10-12T12:59:26.123Z",
+  "updatedAt": "2023-10-12T12:59:26.123Z"
+}
 ```
 
 ### GET /api/posts/:id
+
 ```http
 GET /api/posts/1 HTTP/1.1
 Host: localhost:3000
 ```
 
 ### Resposta:
+
 ```json
-    {
-          "id": 1,
-          "title": "Primeiro Post",
-          "content": "Este é o conteúdo do primeiro post.",
-          "author": "Professor João",
-          "createdAt": "2023-10-12T12:59:26.123Z",
-          "updatedAt": "2023-10-12T12:59:26.123Z"
-    }
+{
+  "id": 1,
+  "title": "Primeiro Post",
+  "content": "Este é o conteúdo do primeiro post.",
+  "author": "Professor João",
+  "createdAt": "2023-10-12T12:59:26.123Z",
+  "updatedAt": "2023-10-12T12:59:26.123Z"
+}
 ```
 
-
 ### PUT /api/posts/:id
+
 ```http
 PUT /api/posts/1 HTTP/1.1
 Host: localhost:3000
@@ -139,18 +154,20 @@ x-auth-token: seu_token_jwt
 ```
 
 ### Resposta:
+
 ```json
-    {
-          "id": 1,
-          "title": "Título Atualizado",
-          "content": "Conteúdo Atualizado",
-          "author": "Professor João",
-          "createdAt": "2023-10-12T12:59:26.123Z",
-          "updatedAt": "2023-10-12T12:59:26.123Z"
-    }
+{
+  "id": 1,
+  "title": "Título Atualizado",
+  "content": "Conteúdo Atualizado",
+  "author": "Professor João",
+  "createdAt": "2023-10-12T12:59:26.123Z",
+  "updatedAt": "2023-10-12T12:59:26.123Z"
+}
 ```
 
 ### DELETE /api/posts/:id
+
 ```http
 DELETE /api/posts/1 HTTP/1.1
 Host: localhost:3000
@@ -158,122 +175,133 @@ x-auth-token: seu_token_jwt
 ```
 
 ### Resposta:
+
 ```json
-    {
-      "message": "Post excluído com sucesso"
-    }
+{
+  "message": "Post excluído com sucesso"
+}
 ```
 
 **GET /api/posts/search?q=palavra-chave**
+
 ```http
 GET /api/posts/search?q=Primeiro HTTP/1.1
 Host: localhost:3000
 ```
 
 ### Resposta:
+
 ```json
 [
-    {
-          "id": 1,
-          "title": "Primeiro Post",
-          "content": "Este é o conteúdo do primeiro post.",
-          "author": "Professor João",
-          "createdAt": "2023-10-12T12:59:26.123Z",
-          "updatedAt": "2023-10-12T12:59:26.123Z"
-    }
+  {
+    "id": 1,
+    "title": "Primeiro Post",
+    "content": "Este é o conteúdo do primeiro post.",
+    "author": "Professor João",
+    "createdAt": "2023-10-12T12:59:26.123Z",
+    "updatedAt": "2023-10-12T12:59:26.123Z"
+  }
 ]
 ```
 
 # Estrutura dos Diretórios
 
 Para uma melhor compreensão da estrutura da aplicação, aqui está um detalhamento dos diretórios e arquivos:
-````
+
+```
 educa_blog_nodejs
 │
 ├── src/
 │   ├── config/
-│   │   ├── database.ts              
-│   │   └── logger.ts                
+│   │   ├── database.ts
+│   │   └── logger.ts
 │   │
 │   ├── controllers/
-│   │   ├── authController.ts         
-│   │   └── postController.ts         
+│   │   ├── authController.ts
+│   │   └── postController.ts
 │   │
 │   ├── interfaces/
-│   │   └── IPost.ts                  
+│   │   └── IPost.ts
 │   │
 │   ├── models/
-│   │   ├── postModel.ts              
-│   │   └── userModel.ts              
+│   │   ├── postModel.ts
+│   │   └── userModel.ts
 │   │
 │   ├── repositories/
 │   │   └── postRepository.ts
 │   │
 │   ├── routes/
-│   │   ├── authRoutes.ts             
-│   │   └── postRoutes.ts             
+│   │   ├── authRoutes.ts
+│   │   └── postRoutes.ts
 │   │
 │   ├── middlewares/
-│   │   ├── authMiddleware.ts          
-│   │   ├── validationMiddleware.ts     
-│   │   ├── errorHandler.ts             
-│   │   └── index.ts                    
+│   │   ├── authMiddleware.ts
+│   │   ├── validationMiddleware.ts
+│   │   ├── errorHandler.ts
+│   │   └── index.ts
 │   │
 │   ├── services/
-│   │   ├── postService.ts             
-│   │   └── userService.ts             
+│   │   ├── postService.ts
+│   │   └── userService.ts
 │   │
 │   ├── errors/
-│   │   └── AppError.ts                
+│   │   └── AppError.ts
 │   │
-│   └── app.ts                         
+│   └── app.ts
 │
-├── .env                                
-├── .gitignore                          
-├── Dockerfile                          
-├── docker-compose.yml                  
-├── package.json                        
-├── tsconfig.json                       
-└── README.md                           
-````
+├── .env
+├── .gitignore
+├── Dockerfile
+├── docker-compose.yml
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
 # Variáveis de Ambiente
 
 Certifique-se de configurar as seguintes variáveis de ambiente no arquivo .env:
 
-* DB_NAME=educablog
-* DB_USER=educablog
-* DB_PASSWORD=123456
-* DB_HOST=localhost
-* DB_PORT=5432
-* JWT_SECRET=mySuperSecretKey12345!
+- DB_NAME=educablog
+- DB_USER=educablog
+- DB_PASSWORD=123456
+- DB_HOST=localhost
+- DB_PORT=5432
+- JWT_SECRET=mySuperSecretKey12345!
 
 # Scripts Disponíveis
 
 No package.json, você tem os seguintes scripts disponíveis:
 
-* start: Inicia a aplicação.
-* test: Executa os testes usando Mocha.
+- start: Inicia a aplicação.
+- test: Executa os testes usando Mocha.
 
 Para iniciar a aplicação:
+
 ```bash
 npm start
 ```
 
 Para executar os testes:
+
 ```bash
 npm test
 ```
+
 ⠀
+
 # Docker
 
 Para rodar a aplicação usando Docker:
 
 1. Construa a imagem:
+
 ```bash
 docker build -t educa_blog_nodejs .
 ```
+
 2. Rode a aplicação:
+
 ```bash
 docker-compose up
 ```
@@ -283,7 +311,8 @@ docker-compose up
 ### Workflow de CI/CD
 
 **.github/workflows/ci-cd.yml**
-````
+
+```
 name: CI/CD Pipeline
 
 on:
@@ -332,7 +361,7 @@ jobs:
 
       - name: Build project
         run: npm run build
-````
+```
 
 # Contribuição
 
