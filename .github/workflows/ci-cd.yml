@@ -12,21 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      db:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: educablog
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: educablog
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U educablog -d educablog"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,31 +19,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+        with:
+          docker-version: 'latest'
+
       - name: Build Docker image
-        run: docker buildx build --tag my-app:latest --load .
-
-      - name: List Docker images
-        run: docker images
-
-      - name: Wait for DB to be ready
-        run: |
-          until docker exec ${HOSTNAME} pg_isready -U educablog -d educablog; do
-            echo "Waiting for database to be ready..."
-            sleep 2
-          done
+        run: docker build -t my-app:latest .
 
       - name: Run Prisma Migrations
-        env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
-        run: docker run --network host --rm my-app:latest npx prisma migrate deploy
+        run: docker run --rm my-app:latest npx prisma migrate deploy
 
       - name: Run Tests
-        env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
-        run: docker run --network host --rm my-app:latest npm test
+        run: docker run --rm my-app:latest npm test
 
       - name: Deploy to Production
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run -d -p 3000:3000 my-app:latest
+        run: |
+          docker run -d -p 3000:3000 my-app:latest
