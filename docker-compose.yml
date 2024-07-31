@@ -14,9 +14,8 @@ services:
 
   app:
     build: .
-    environment:
-      DATABASE_URL: postgresql://educablog:123456@db:5432/educablog?schema=public
-      JWT_SECRET: mySuperSecretKey12345!
+    env_file:
+      - .env.docker
     ports:
       - "3000:3000"
     depends_on:

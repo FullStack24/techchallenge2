@@ -22,20 +22,25 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-docker@v2
         with:
-          docker-version: 'latest'
+          version: 'latest'
 
       - name: Build Docker image
         run: docker build -t my-app:latest .
 
       - name: Run Prisma Migrations
-        run: docker run --rm my-app:latest npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: docker run --rm --env-file .env.docker my-app:latest npx prisma migrate deploy
 
       - name: Run Tests
-        run: docker run --rm my-app:latest npm test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: docker run --rm --env-file .env.docker my-app:latest npm test
 
       - name: Deploy to Production
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: |
-          docker run -d -p 3000:3000 my-app:latest
+        run: docker run -d -p 3000:3000 --env-file .env.docker my-app:latest
