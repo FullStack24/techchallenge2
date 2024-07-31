@@ -9,7 +9,6 @@ RUN npm install
 COPY . .
 
 RUN npx prisma generate
-
 RUN npm run build
 
 # Copia o arquivo .env.docker para o contêiner
