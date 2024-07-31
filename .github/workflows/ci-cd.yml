@@ -20,7 +20,10 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build Docker image
-        run: docker buildx build --tag my-app:latest --tag my-app:${{ github.sha }} .
+        run: docker buildx build --tag my-app:latest --load .
+
+      - name: List Docker images
+        run: docker images
 
       - name: Run Prisma Migrations
         run: |
@@ -35,7 +38,4 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          docker run -d -p 3000:3000 \
-            -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            my-app:latest
+          docker run -d -p 3000:3000 my-app:latest
