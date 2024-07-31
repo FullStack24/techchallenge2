@@ -7,13 +7,17 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
   "include": [
-    "src/**/*", "tests/**/*",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts",
-    "../../Library/Caches/JetBrains/WebStorm2023.3/javascript/typings/mocha/10.0.7/node_modules/@types/mocha/index.d.ts"
+    "src/**/*",
+    "src/types/**/*",
+    "tests/**/*",
+    "node_modules/ts-jest/globals.d.ts"
   ],
   "exclude": ["node_modules"]
 }

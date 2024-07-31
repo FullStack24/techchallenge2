@@ -1,17 +1,26 @@
-version: '3.8'
+version: '3.9'
 
 services:
   db:
-    image: postgres:latest  # Usa a imagem mais recente do PostgreSQL
+    image: postgres:latest
     environment:
-      POSTGRES_USER: educablog             # Nome do usuário do banco de dados
-      POSTGRES_PASSWORD: 123456    # Senha do usuário
-      POSTGRES_DB: educablog                 # Nome do banco de dados a ser criado
+      POSTGRES_USER: educablog
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: educablog
     ports:
-      - "5432:5432"  # Mapeia a porta padrão do PostgreSQL
+      - "5432:5432"
     volumes:
-        - db_data:/var/lib/postgresql/data
-        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    env_file:
+      - .env.docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    command: ["sh", "-c", "npx prisma migrate deploy && ts-node src/app.ts"]
 
 volumes:
-  db_data:  # Define um volume nomeado para persistir os dados do banco de dados
+  db_data:

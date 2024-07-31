@@ -1,22 +1,21 @@
-import { body, validationResult } from 'express-validator';
-import { Request, Response, NextFunction } from 'express';
+import { check, validationResult } from "express-validator";
+import { Request, Response, NextFunction } from "express";
 
 export const postValidationRules = () => {
   return [
-    body('title').notEmpty().withMessage('O título é obrigatório.'),
-    body('content').notEmpty().withMessage('O conteúdo é obrigatório.'),
+    check("title").notEmpty().withMessage("Title is required"),
+    check("content").notEmpty().withMessage("Content is required"),
   ];
 };
 
 export const validatePost = (
   req: Request,
   res: Response,
-  next: NextFunction
-): void => {
+  next: NextFunction,
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
-  } else {
-    next();
+    return res.status(422).json({ errors: errors.array() });
   }
+  next();
 };

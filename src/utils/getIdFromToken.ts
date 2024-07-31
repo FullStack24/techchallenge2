@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export default function getIdFromToken(authorization: string) {
   const token = authorization.slice(7, authorization.length);

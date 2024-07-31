@@ -1,15 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../errors/AppError';
+import { Request, Response, NextFunction } from "express";
 
 const errorHandler = (
-  err: AppError,
+  err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  return res.status(err.statusCode | 400).json({ message: err.message });
-  console.error(err);
-  res.status(500).json({ message: 'Erro interno do servidor!' });
+  console.error(err.stack);
+
+  res.status(500).json({
+    message: "Algo deu errado!",
+    error: err.message || "Erro desconhecido",
+  });
 };
 
 export default errorHandler;

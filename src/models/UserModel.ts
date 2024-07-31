@@ -1,46 +1,26 @@
-import db from '../config/database';
-import bcrypt from 'bcryptjs';
-import IUser from '../interfaces/IUser';
+import { PrismaClient, User } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
+const prisma = new PrismaClient();
 
 export default class UserModel {
-  static async create(data: {
-    username: string;
-    password: string;
-  }): Promise<IUser> {
-    const { username, password } = data;
+  static async create(username: string, password: string): Promise<void> {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newuser = await db.user.create({
+    await prisma.user.create({
       data: {
         username,
         password: hashedPassword,
       },
     });
-
-    return newuser as IUser;
   }
 
-  static async findByUsername(
-    username: string
-  ): Promise<{ id: string; username: string; password: string }> {
-    const result = await db.user.findFirstOrThrow({
+  static async findByUsername(username: string): Promise<User | null> {
+    return prisma.user.findUnique({
       where: { username },
-      select: {
-        password: true,
-        id: true,
-        username: true,
-      },
     });
-    return result;
   }
 
-  static async findAll(): Promise<{ id: string; username: string }[]> {
-    const result = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        password: false,
-      },
-    });
-    return result;
+  static async findAll(): Promise<User[]> {
+    return prisma.user.findMany();
   }
 }

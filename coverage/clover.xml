@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1722395792280" clover="3.2.0">
+  <project timestamp="1722395792280" name="All files">
+    <metrics statements="19" coveredstatements="19" conditionals="0" coveredconditionals="0" methods="13" coveredmethods="13" elements="32" coveredelements="32" complexity="0" loc="19" ncloc="19" packages="1" files="2" classes="2"/>
+    <file name="postService.ts" path="/Users/thwanyleles/WebstormProjects/techchallenge2/src/services/postService.ts">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="7"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="16" count="1" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="28" count="1" type="stmt"/>
+      <line num="32" count="1" type="stmt"/>
+      <line num="36" count="1" type="stmt"/>
+    </file>
+    <file name="userService.ts" path="/Users/thwanyleles/WebstormProjects/techchallenge2/src/services/userService.ts">
+      <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="15" count="1" type="stmt"/>
+      <line num="18" count="1" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

@@ -1,30 +1,36 @@
-import PostRepository from '../repositories/postRepository'; // Importando o repositório
-import { IPost } from '../interfaces/IPost'; // Importando a interface IPost
+import PostRepository from "../repositories/postRepository";
+import { IPost } from "../interfaces/IPost";
 
 class PostService {
+  private postRepository: typeof PostRepository;
+
+  constructor(postRepository: typeof PostRepository) {
+    this.postRepository = postRepository;
+  }
+
   async createPost(data: IPost): Promise<IPost> {
-    return PostRepository.create(data); // Chama o método do repositório
+    return this.postRepository.create(data);
   }
 
   async getAllPosts(): Promise<IPost[]> {
-    return PostRepository.findAll(); // Chama o método do repositório
+    return this.postRepository.findAll();
   }
 
   async getPostById(id: string): Promise<IPost | null> {
-    return PostRepository.findById(id); // Chama o método do repositório
+    return this.postRepository.findById(id);
   }
 
   async updatePost(id: string, data: Partial<IPost>): Promise<IPost | null> {
-    return PostRepository.update(id, data); // Chama o método do repositório
+    return this.postRepository.update(id, data);
   }
 
   async deletePost(id: string): Promise<void> {
-    await PostRepository.delete(id); // Chama o método do repositório
+    await this.postRepository.delete(id);
   }
 
   async searchPosts(keyword: string): Promise<IPost[]> {
-    return PostRepository.search(keyword); // Chama o método do repositório
+    return this.postRepository.search(keyword);
   }
 }
 
-export default new PostService(); // Exporta uma instância do serviço
+export default new PostService(PostRepository);

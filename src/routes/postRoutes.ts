@@ -1,31 +1,40 @@
-import { Router } from 'express';
-import postController from '../controllers/postController';
-import authMiddleware from '../middlewares/authMiddleware';
+import { Router } from "express";
+import {
+  createPost,
+  getPostById,
+  updatePost,
+  deletePost,
+  searchPosts,
+  getAllPosts,
+} from "../controllers/postController";
+import authMiddleware from "../middlewares/authMiddleware";
 import {
   postValidationRules,
   validatePost,
-} from '../middlewares/validationMiddleware';
+} from "../middlewares/validationMiddleware";
 
 const router = Router();
 
-router.get('/', postController.getAllPosts);
-router.get('/:id', postController.getPostById);
+router.get("/posts", getAllPosts);
+
+router.get("/posts/search", searchPosts);
+
+router.get("/posts/:id", getPostById);
+router.put(
+  "/posts/:id",
+  authMiddleware,
+  ...postValidationRules(),
+  validatePost,
+  updatePost,
+);
+router.delete("/posts/:id", authMiddleware, deletePost);
 
 router.post(
-  '/',
-  postValidationRules(),
-  validatePost,
-  postController.createPost
-);
-router.put(
-  '/:id',
+  "/posts",
   authMiddleware,
-  postValidationRules,
+  ...postValidationRules(),
   validatePost,
-  postController.updatePost
+  createPost,
 );
-
-router.delete('/:id', authMiddleware, postController.deletePost);
-router.get('/search', postController.searchPosts);
 
 export default router;

@@ -2,14 +2,14 @@
 
 ## Descrição
 
-Uma aplicação de blogging para professores da rede pública de educação, permitindo que eles postem e compartilhem conteúdo com seus alunos.
+O EducaBlog é uma aplicação de blogging projetada para professores da rede pública de educação, permitindo que eles postem e compartilhem conteúdo educativo com seus alunos.
 
 ## Setup Inicial
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/educa_blog_nodejs.git
-   cd educa_blog_nodejs
+   git clone https://github.com/seu-usuario/techchallenge2.git
+   cd techchallenge2
    ```
 2. Instale as dependências:
 
@@ -18,11 +18,10 @@ Uma aplicação de blogging para professores da rede pública de educação, per
    ```
 
 3. Configure as variáveis de ambiente:
-   Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
-   `bash
-   JWT_SECRET=mySuperSecretKey12345!
-   DATABASE_URL="postgresql://user:123456@localhost:5432/educablog"
-`
+Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
+    ```bash
+    DATABASE_URL="postgresql://educablog:123456@localhost:5432/educablog?schema=public"
+    ```
 
 4. Inicie o banco de dados com o Docker:
 
@@ -44,27 +43,104 @@ docker run --name mypostgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=123456 -
 
 # Arquitetura da Aplicação
 
-- server.ts: Arquivo principal que configura o servidor Express e a conexão com o MongoDB.
-- src/
-  - controllers/: Contém os controladores para manipulação das operações de CRUD.
-  - models/: Contém os modelos de dados.
-  - interfaces/: Contém as definições das interfaces.
-  - repositories/: Contém a lógica de acesso a dados.
-  - services/: Contém a lógica de negócios.
-  - routes/: Contém as definições de rotas.
-  - middlewares/: Contém os middlewares de autenticação e validação.
-  - errors/: Contém a classe de erro personalizada.
+A aplicação segue uma arquitetura organizada para separar as responsabilidades e facilitar a manutenção:
+
+````
+techchallenge2
+│
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+│
+├── coverage/
+│
+├── dist/
+│
+├── node_modules/
+│
+├── prisma/
+│   ├── migrations/
+│   └── schema.prisma
+│
+├── src/
+│   ├── config/
+│   │   ├── database.ts
+│   │   └── logger.ts
+│   │
+│   ├── controllers/
+│   │   ├── authController.ts
+│   │   └── postController.ts
+│   │
+│   ├── errors/
+│   │   └── AppError.ts
+│   │
+│   ├── interfaces/
+│   │   ├── IPost.ts
+│   │   └── IUser.ts
+│   │
+│   ├── middlewares/
+│   │   ├── authMiddleware.ts
+│   │   ├── errorHandler.ts
+│   │   └── validationMiddleware.ts
+│   │
+│   ├── models/
+│   │   ├── postModel.ts
+│   │   └── UserModel.ts
+│   │
+│   ├── repositories/
+│   │   ├── postRepository.ts
+│   │   └── userRepository.ts
+│   │
+│   ├── routes/
+│   │   ├── authRoutes.ts
+│   │   └── postRoutes.ts
+│   │
+│   ├── services/
+│   │   ├── postService.ts
+│   │   └── userService.ts
+│   │
+│   ├── tests/
+│   │   ├── postService.test.ts
+│   │   └── userService.test.ts
+│   │
+│   ├── types/
+│   │   ├── express.d.ts
+│   │   └── yamljs.d.ts
+│   │
+│   ├── utils/
+│   │   └── getIdFromToken.ts
+│   │
+│   └── app.ts
+│
+├── .env
+├── .env.docker
+├── .gitignore
+├── combined.log
+├── docker-compose.yml
+├── Dockerfile
+├── error.log
+├── eslint.config.mjs
+├── jest.config.js
+├── LICENSE
+├── package.json
+├── package-lock.json
+├── README.md
+├── swagger.yaml
+├── tsconfig.json
+└── tsconfig.build.json                   
+````
+
 
 # Guia de Uso das APIs
 
 ### Endpoints
 
-- **GET /api/posts**: Lista todos os posts.
-- **GET /api/posts/:id**: Obtém um post por ID.
-- **POST /api/posts**: Cria um novo post (Requer autenticação).
-- **PUT /api/posts/:id**: Atualiza um post existente (Requer autenticação).
-- **DELETE /api/posts/:id**: Exclui um post (Requer autenticação).
-- **GET /api/posts/search?q=palavra-chave**: Busca posts por palavra-chave.
+* **GET /api/posts**: Lista todos os posts. (Requer autenticação).
+* **GET /api/posts/:id**: Obtém um post por ID. (Requer autenticação).
+* **POST /api/posts**: Cria um novo post (Requer autenticação).
+* **PUT /api/posts/:id**: Atualiza um post existente (Requer autenticação).
+* **DELETE /api/posts/:id**: Exclui um post (Requer autenticação).
+* **GET /api/posts/search?q=palavra-chave**: Busca posts por palavra-chave.
 
 ### Exemplos de Requisição e Resposta
 
@@ -73,6 +149,7 @@ docker run --name mypostgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=123456 -
 ```http
 GET /api/posts HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer seu_token_jwt
 ```
 
 ### Resposta:
@@ -95,8 +172,7 @@ Host: localhost:3000
 ```http
 POST /api/posts HTTP/1.1
 Host: localhost:3000
-Content-Type: application/json
-x-auth-token: seu_token_jwt
+Authorization: Bearer seu_token_jwt
 
     {
         "title": "Novo Post",
@@ -123,6 +199,7 @@ x-auth-token: seu_token_jwt
 ```http
 GET /api/posts/1 HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer seu_token_jwt
 ```
 
 ### Resposta:
@@ -144,7 +221,7 @@ Host: localhost:3000
 PUT /api/posts/1 HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
-x-auth-token: seu_token_jwt
+Authorization: Bearer seu_token_jwt
 
     {
         "title": "Título Atualizado",
@@ -171,7 +248,7 @@ x-auth-token: seu_token_jwt
 ```http
 DELETE /api/posts/1 HTTP/1.1
 Host: localhost:3000
-x-auth-token: seu_token_jwt
+Authorization: Bearer seu_token_jwt
 ```
 
 ### Resposta:
@@ -187,6 +264,7 @@ x-auth-token: seu_token_jwt
 ```http
 GET /api/posts/search?q=Primeiro HTTP/1.1
 Host: localhost:3000
+Authorization: Bearer seu_token_jwt
 ```
 
 ### Resposta:
@@ -204,82 +282,59 @@ Host: localhost:3000
 ]
 ```
 
-# Estrutura dos Diretórios
+### Variáveis de Ambiente
+Certifique-se de configurar as seguintes variáveis de ambiente no arquivo `.env`:
 
-Para uma melhor compreensão da estrutura da aplicação, aqui está um detalhamento dos diretórios e arquivos:
+* `DATABASE_URL`="postgresql://educablog:123456@localhost:5432/educablog?schema=public"
 
-```
-educa_blog_nodejs
-│
-├── src/
-│   ├── config/
-│   │   ├── database.ts
-│   │   └── logger.ts
-│   │
-│   ├── controllers/
-│   │   ├── authController.ts
-│   │   └── postController.ts
-│   │
-│   ├── interfaces/
-│   │   └── IPost.ts
-│   │
-│   ├── models/
-│   │   ├── postModel.ts
-│   │   └── userModel.ts
-│   │
-│   ├── repositories/
-│   │   └── postRepository.ts
-│   │
-│   ├── routes/
-│   │   ├── authRoutes.ts
-│   │   └── postRoutes.ts
-│   │
-│   ├── middlewares/
-│   │   ├── authMiddleware.ts
-│   │   ├── validationMiddleware.ts
-│   │   ├── errorHandler.ts
-│   │   └── index.ts
-│   │
-│   ├── services/
-│   │   ├── postService.ts
-│   │   └── userService.ts
-│   │
-│   ├── errors/
-│   │   └── AppError.ts
-│   │
-│   └── app.ts
-│
-├── .env
-├── .gitignore
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-├── tsconfig.json
-└── README.md
+### Scripts Disponíveis
+
+**start**: Inicia a aplicação com `ts-node` para executar `src/app.ts`.
+```bash
+npm start
 ```
 
-# Variáveis de Ambiente
+**build**: Transpila o código TypeScript para JavaScript usando o TypeScript Compiler (tsc).
+```bash
+npm run build
+```
 
-Certifique-se de configurar as seguintes variáveis de ambiente no arquivo .env:
+**lint**: Executa o ESLint para verificar o código fonte.
+```bash
+npm run lint
+```
 
-- DB_NAME=educablog
-- DB_USER=educablog
-- DB_PASSWORD=123456
-- DB_HOST=localhost
-- DB_PORT=5432
-- JWT_SECRET=mySuperSecretKey12345!
+**format**: Formata o código fonte usando Prettier.
+```bash
+npm run format
+```
 
-# Scripts Disponíveis
+**test**: Executa os testes com Jest.
+```bash
+npm test
+```
 
-No package.json, você tem os seguintes scripts disponíveis:
-
-- start: Inicia a aplicação.
-- test: Executa os testes usando Mocha.
+### Como Usar
 
 Para iniciar a aplicação:
 
 ```bash
 npm start
+```
+
+Para transpilar o código TypeScript:
+```bash
+npm run build
+```
+
+Para verificar o código fonte com linting:
+```bash
+npm run lint
+```
+
+Para formatar o código fonte:
+```bash
+npm run format
 ```
 
 Para executar os testes:
@@ -288,22 +343,13 @@ Para executar os testes:
 npm test
 ```
 
-⠀
-
 # Docker
 
 Para rodar a aplicação usando Docker:
 
-1. Construa a imagem:
-
+1. Rode a aplicação:
 ```bash
-docker build -t educa_blog_nodejs .
-```
-
-2. Rode a aplicação:
-
-```bash
-docker-compose up
+docker-compose up --build
 ```
 
 # CI/CD com GitHub Actions
@@ -327,41 +373,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: educablog
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: educablog
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: Install dependencies
-        run: npm install
+    - name: Set up Docker
+      uses: docker/setup-docker@v2
+      with:
+        docker-version: 'latest'
 
-      - name: Run tests
-        env:
-          DATABASE_URL: postgres://educablog:123456@localhost:5432/educablog
-        run: npm test
+    - name: Build Docker image
+      run: docker build -t my-app:latest .
 
-      - name: Build project
-        run: npm run build
-```
+    - name: Run Prisma Migrations
+      run: docker run --rm my-app:latest npx prisma migrate deploy
+
+    - name: Run Tests
+      run: docker run --rm my-app:latest npm test
+
+    - name: Deploy to Production
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        docker run -d -p 3000:3000 my-app:latest
+````
 
 # Contribuição
 

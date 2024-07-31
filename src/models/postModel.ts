@@ -1,65 +1,46 @@
-import db from '../config/database';
-import { IPost } from '../interfaces/IPost';
+import { PrismaClient, Prisma } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const PostModel = {
-  create: async (data: IPost): Promise<IPost> => {
-    const { title, content, authorId } = data;
-    const result = await db.post.create({
-      data: {
-        title,
-        content,
-        authorId,
-      },
+  create: async (data: Prisma.PostCreateInput) => {
+    return prisma.post.create({
+      data,
     });
-    return result as IPost;
   },
 
-  findAll: async (): Promise<IPost[]> => {
-    const result = await db.post.findMany({
-      orderBy: { modifiedAt: 'desc' },
-    });
-    return result as IPost[];
+  findAll: async () => {
+    return prisma.post.findMany();
   },
 
-  findById: async (id: string): Promise<IPost> => {
-    const result = await db.post.findFirstOrThrow({
-      where: { id: id },
+  findById: async (id: string) => {
+    return prisma.post.findUnique({
+      where: { id },
     });
-    return result as IPost;
   },
 
-  update: async (id: string, data: Partial<IPost>): Promise<IPost | null> => {
-    const { title, content } = data;
-    const result = await db.post.update({
-      where: { id: id },
-      data: {
-        title,
-        content,
-      },
+  update: async (id: string, data: Prisma.PostUpdateInput) => {
+    return prisma.post.update({
+      where: { id },
+      data,
     });
-    return result as IPost;
   },
 
-  delete: async (id: string): Promise<void> => {
-    await db.post.delete({
+  delete: async (id: string) => {
+    await prisma.post.delete({
+      where: { id },
+    });
+  },
+
+  search: async (keyword: string) => {
+    return prisma.post.findMany({
       where: {
-        id: id,
+        OR: [
+          { title: { contains: keyword, mode: "insensitive" } },
+          { content: { contains: keyword, mode: "insensitive" } },
+        ],
       },
     });
-  },
-
-  search: async (keyword: string): Promise<IPost[]> => {
-    const result = await db.post.findMany({
-      where: {
-        title: {
-          contains: keyword,
-        },
-        content: {
-          contains: keyword,
-        },
-      },
-    });
-    return result as IPost[];
   },
 };
 

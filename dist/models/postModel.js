@@ -8,50 +8,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = __importDefault(require("../config/database"));
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 const PostModel = {
     create: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, content, author } = data;
-        const result = yield database_1.default.query('INSERT INTO posts (title, content, author, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *', [title, content, author]);
-        return result.rows[0];
+        return prisma.post.create({
+            data,
+        });
     }),
     findAll: () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield database_1.default.query('SELECT * FROM posts');
-        return result.rows.map(row => ({
-            id: row.id,
-            title: row.title,
-            content: row.content,
-            author: row.author,
-            createdAt: row.created_at,
-            updatedAt: row.updated_at,
-        }));
+        return prisma.post.findMany();
     }),
     findById: (id) => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield database_1.default.query('SELECT * FROM posts WHERE id = $1', [id]);
-        return result.rows.length > 0 ? result.rows[0] : null;
+        return prisma.post.findUnique({
+            where: { id },
+        });
     }),
     update: (id, data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, content } = data;
-        const result = yield database_1.default.query('UPDATE posts SET title = $1, content = $2, updated_at = NOW() WHERE id = $3 RETURNING *', [title, content, id]);
-        return result.rows.length > 0 ? result.rows[0] : null;
+        return prisma.post.update({
+            where: { id },
+            data,
+        });
     }),
     delete: (id) => __awaiter(void 0, void 0, void 0, function* () {
-        yield database_1.default.query('DELETE FROM posts WHERE id = $1', [id]);
+        yield prisma.post.delete({
+            where: { id },
+        });
     }),
     search: (keyword) => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield database_1.default.query('SELECT * FROM posts WHERE title ILIKE $1 OR content ILIKE $1', [`%${keyword}%`]);
-        return result.rows.map(row => ({
-            id: row.id,
-            title: row.title,
-            content: row.content,
-            author: row.author,
-            createdAt: row.created_at,
-            updatedAt: row.updated_at,
-        }));
-    })
+        return prisma.post.findMany({
+            where: {
+                OR: [
+                    { title: { contains: keyword, mode: "insensitive" } },
+                    { content: { contains: keyword, mode: "insensitive" } },
+                ],
+            },
+        });
+    }),
 };
 exports.default = PostModel;
