@@ -20,27 +20,26 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
-        with:
-          version: 'latest'
+        uses: docker/setup-docker@v2
 
       - name: Build Docker image
         run: docker build -t my-app:latest .
 
       - name: Run Prisma Migrations
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run --rm --env-file .env.docker my-app:latest npx prisma migrate deploy
+        run: docker run --rm --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest npx prisma migrate deploy
 
       - name: Run Tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run --rm --env-file .env.docker my-app:latest npm test
+        run: docker run --rm --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest npm test
 
       - name: Deploy to Production
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run -d -p 3000:3000 --env-file .env.docker my-app:latest
+        run: |
+          docker run -d -p 3000:3000 --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest
