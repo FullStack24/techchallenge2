@@ -8,3 +8,4 @@ class AppError extends Error {
     }
 }
 exports.AppError = AppError;
+exports.default = AppError;

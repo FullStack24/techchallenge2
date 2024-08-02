@@ -43,15 +43,18 @@ const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getPostById = getPostById;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { title, content } = req.body;
+    const { title, content, author } = req.body;
     try {
-        const post = yield postService_1.default.updatePost(id, { title, content });
-        if (post) {
-            res.status(200).json(post);
+        const existingPost = yield postService_1.default.getPostById(id);
+        if (!existingPost) {
+            return res.status(404).json({ message: "Postagem não encontrada" });
         }
-        else {
-            res.status(404).json({ message: "Postagem não encontrada" });
-        }
+        const updatedPost = yield postService_1.default.updatePost(id, {
+            title,
+            content,
+            author,
+        });
+        res.status(200).json(updatedPost);
     }
     catch (error) {
         res.status(500).json({ message: "Erro ao atualizar postagem" });

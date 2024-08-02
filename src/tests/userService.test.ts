@@ -2,12 +2,12 @@ import userService from "../services/userService";
 import UserRepository from "../repositories/userRepository";
 import { IUser } from "../interfaces/IUser";
 
-// Mock do repositório
 jest.mock("../repositories/userRepository", () => {
   return {
     validateUser: jest.fn(),
     getUserById: jest.fn(),
     createUser: jest.fn(),
+    findAll: jest.fn(),
   };
 });
 
@@ -19,6 +19,21 @@ describe("UserService", () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+
+  const userListMock: Omit<IUser, "password">[] = [
+    {
+      id: "1",
+      username: "user1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: "2",
+      username: "user2",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -56,5 +71,15 @@ describe("UserService", () => {
       "newuser",
       "newpassword",
     );
+  });
+
+  it("deve listar todos os usuários, omitindo a senha", async () => {
+    (UserRepository.findAll as jest.Mock).mockResolvedValue(
+      userListMock as IUser[],
+    );
+
+    const result = await userService.listAllUsers();
+    expect(result).toEqual(userListMock);
+    expect(UserRepository.findAll).toHaveBeenCalled();
   });
 });

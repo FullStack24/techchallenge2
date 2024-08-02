@@ -22,4 +22,7 @@ const getUserById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 const createUser = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
     return userRepository_1.default.createUser(username, password);
 });
-exports.default = { validateUser, getUserById, createUser };
+const listAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.findAll();
+});
+exports.default = { validateUser, getUserById, createUser, listAllUsers };

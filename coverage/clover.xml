@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1722395792280" clover="3.2.0">
-  <project timestamp="1722395792280" name="All files">
-    <metrics statements="19" coveredstatements="19" conditionals="0" coveredconditionals="0" methods="13" coveredmethods="13" elements="32" coveredelements="32" complexity="0" loc="19" ncloc="19" packages="1" files="2" classes="2"/>
+<coverage generated="1722577639594" clover="3.2.0">
+  <project timestamp="1722577639594" name="All files">
+    <metrics statements="21" coveredstatements="21" conditionals="0" coveredconditionals="0" methods="15" coveredmethods="15" elements="36" coveredelements="36" complexity="0" loc="21" ncloc="21" packages="1" files="2" classes="2"/>
     <file name="postService.ts" path="/Users/thwanyleles/WebstormProjects/techchallenge2/src/services/postService.ts">
       <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="7"/>
       <line num="1" count="1" type="stmt"/>
@@ -15,7 +15,7 @@
       <line num="36" count="1" type="stmt"/>
     </file>
     <file name="userService.ts" path="/Users/thwanyleles/WebstormProjects/techchallenge2/src/services/userService.ts">
-      <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+      <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="8"/>
       <line num="1" count="1" type="stmt"/>
       <line num="4" count="1" type="stmt"/>
       <line num="7" count="1" type="stmt"/>
@@ -26,6 +26,8 @@
       <line num="18" count="1" type="stmt"/>
       <line num="19" count="1" type="stmt"/>
       <line num="22" count="1" type="stmt"/>
+      <line num="23" count="1" type="stmt"/>
+      <line num="26" count="1" type="stmt"/>
     </file>
   </project>
 </coverage>

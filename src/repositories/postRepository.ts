@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { IPost } from "../interfaces/IPost";
 
 const prisma = new PrismaClient();
@@ -29,12 +29,13 @@ const PostRepository = {
     id: string,
     data: Partial<Omit<IPost, "createdAt" | "updatedAt">>,
   ): Promise<IPost | null> {
-    const { title, content = "" } = data;
+    const { title, content = "", author } = data;
     return prisma.post.update({
       where: { id },
       data: {
         title,
         content,
+        author,
         updatedAt: new Date(),
       },
     });
@@ -55,10 +56,6 @@ const PostRepository = {
         ],
       },
     });
-  },
-
-  async customQuery<T>(query: Prisma.Sql, params: T[]): Promise<T[]> {
-    return prisma.$queryRaw<T[]>(query, ...params);
   },
 };
 

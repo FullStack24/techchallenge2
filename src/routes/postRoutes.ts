@@ -16,18 +16,8 @@ import {
 const router = Router();
 
 router.get("/posts", getAllPosts);
-
 router.get("/posts/search", searchPosts);
-
 router.get("/posts/:id", getPostById);
-router.put(
-  "/posts/:id",
-  authMiddleware,
-  ...postValidationRules(),
-  validatePost,
-  updatePost,
-);
-router.delete("/posts/:id", authMiddleware, deletePost);
 
 router.post(
   "/posts",
@@ -36,5 +26,13 @@ router.post(
   validatePost,
   createPost,
 );
+router.put(
+  "/posts/:id",
+  authMiddleware,
+  ...postValidationRules(),
+  validatePost,
+  updatePost,
+);
+router.delete("/posts/:id", authMiddleware, deletePost);
 
 export default router;

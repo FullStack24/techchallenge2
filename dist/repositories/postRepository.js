@@ -14,7 +14,7 @@ const prisma = new client_1.PrismaClient();
 const PostRepository = {
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, content = '', author } = data;
+            const { title, content = "", author } = data;
             return prisma.post.create({
                 data: {
                     title,
@@ -38,12 +38,13 @@ const PostRepository = {
     },
     update(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, content = '' } = data;
+            const { title, content = "", author } = data;
             return prisma.post.update({
                 where: { id },
                 data: {
                     title,
                     content,
+                    author,
                     updatedAt: new Date(),
                 },
             });
@@ -66,11 +67,6 @@ const PostRepository = {
                     ],
                 },
             });
-        });
-    },
-    customQuery(query, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return prisma.$queryRaw(query, ...params);
         });
     },
 };

@@ -51,6 +51,16 @@ const UserRepository = {
       },
     }) as Promise<IUser>;
   },
+
+  async findAll(): Promise<IUser[]> {
+    const users = await prisma.user.findMany();
+    return users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+  },
 };
 
 export default UserRepository;

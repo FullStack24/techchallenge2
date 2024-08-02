@@ -19,4 +19,8 @@ const createUser = async (
   return UserRepository.createUser(username, password);
 };
 
-export default { validateUser, getUserById, createUser };
+const listAllUsers = async (): Promise<Omit<IUser, "password">[]> => {
+  return UserRepository.findAll();
+};
+
+export default { validateUser, getUserById, createUser, listAllUsers };

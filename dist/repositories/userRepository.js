@@ -60,5 +60,16 @@ const UserRepository = {
             });
         });
     },
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users = yield prisma.user.findMany();
+            return users.map((user) => ({
+                id: user.id,
+                username: user.username,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+            }));
+        });
+    },
 };
 exports.default = UserRepository;

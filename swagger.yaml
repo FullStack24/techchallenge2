@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Blogging API
   version: 1.0.0
-  description: API para gerenciamento de posts de blogging
+  description: API para gerenciamento de posts de blogging, incluindo criação, leitura, atualização e exclusão de posts.
 servers:
   - url: http://localhost:3000/api
 components:
@@ -11,6 +11,69 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: "Token JWT necessário para acessar os endpoints protegidos."
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          example: "Título do Post"
+        content:
+          type: string
+          example: "Conteúdo do post..."
+        author:
+          type: string
+          example: "Dim Grei"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-08-01T12:34:56Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-08-01T12:34:56Z"
+    PostInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Título do Novo Post"
+        content:
+          type: string
+          example: "Conteúdo do novo post..."
+        author:
+          type: string
+          example: "Dim Grei"
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "novoUsuario"
+        password:
+          type: string
+          example: "senhaSegura"
+    UserList:
+      type: array
+      items:
+        type: object
+        properties:
+          username:
+            type: string
+            example: "usuario"
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: "Descrição do erro"
+        message:
+          type: string
+          description: "Mensagem detalhada sobre o erro"
 paths:
   /posts:
     get:
@@ -26,14 +89,13 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    title:
-                      type: string
-                    content:
-                      type: string
+                  $ref: '#/components/schemas/Post'
+        500:
+          description: "Erro interno ao tentar recuperar a lista de posts"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: "Cria um novo post"
       description: "Cria um novo post no sistema."
@@ -44,22 +106,26 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: "Título do Novo Post"
-                content:
-                  type: string
-                  example: "Conteúdo do novo post..."
-                author:
-                  type: string
-                  example: "Dim Grei"
+              $ref: '#/components/schemas/PostInput'
       responses:
         201:
           description: "Post criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
         400:
-          description: "Dados inválidos fornecidos"
+          description: "Dados inválidos fornecidos para criar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar criar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /posts/{id}:
     get:
       summary: "Obtém um post por ID"
@@ -79,16 +145,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  title:
-                    type: string
-                  content:
-                    type: string
+                $ref: '#/components/schemas/Post'
         404:
-          description: "Post não encontrado"
+          description: "Post com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar recuperar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: "Atualiza um post existente"
       description: "Atualiza um post existente baseado no ID fornecido."
@@ -106,21 +175,32 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: "Título Atualizado do Post"
-                content:
-                  type: string
-                  example: "Conteúdo atualizado do post..."
+              $ref: '#/components/schemas/PostInput'
       responses:
         200:
           description: "Post atualizado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
         400:
-          description: "Dados inválidos fornecidos"
+          description: "Dados inválidos fornecidos para atualizar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         404:
-          description: "Post não encontrado"
+          description: "Post com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar atualizar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: "Deleta um post existente"
       description: "Remove um post do sistema baseado no ID fornecido."
@@ -137,7 +217,17 @@ paths:
         200:
           description: "Post deletado com sucesso"
         404:
-          description: "Post não encontrado"
+          description: "Post com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar deletar o post"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /auth/login:
     post:
       summary: "Realiza login"
@@ -167,7 +257,17 @@ paths:
                     type: string
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         401:
-          description: "Credenciais inválidas"
+          description: "Credenciais inválidas fornecidas para login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar realizar login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /auth/register:
     post:
       summary: "Cria um novo usuário"
@@ -177,16 +277,55 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: "novoUsuario"
-                password:
-                  type: string
-                  example: "senhaSegura"
+              $ref: '#/components/schemas/User'
       responses:
         201:
           description: "Usuário criado com sucesso"
         400:
-          description: "Erro ao criar usuário"
+          description: "Erro ao criar usuário, dados inválidos fornecidos"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar criar o usuário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    get:
+      summary: "Lista todos os usuários"
+      description: "Retorna uma lista de todos os usuários cadastrados, sem expor senhas."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Lista de usuários retornada com sucesso"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserList'
+        401:
+          description: "Token de autorização ausente ou inválido"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "Descrição do erro"
+                    example: "Token de autorização ausente."
+                  message:
+                    type: string
+                    description: "Mensagem detalhada sobre o erro"
+                    example: "O cabeçalho Authorization está ausente ou inválido."
+        500:
+          description: "Erro interno ao tentar recuperar a lista de usuários"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

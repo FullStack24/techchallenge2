@@ -16,21 +16,52 @@ exports.register = exports.login = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userService_1 = __importDefault(require("../services/userService"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
-    const user = yield userService_1.default.validateUser(username, password);
-    if (!user) {
-        return res.status(401).json({ message: "Credenciais inválidas" });
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res
+                .status(400)
+                .json({ message: "Usuário e senha são obrigatórios" });
+        }
+        const user = yield userService_1.default.validateUser(username, password);
+        if (!user) {
+            return res.status(401).json({ message: "Credenciais inválidas" });
+        }
+        const secret = process.env.JWT_SECRET;
+        console.log("JWT_SECRET from env:", secret);
+        if (!secret) {
+            console.error("Chave secreta JWT não definida");
+            return res.status(500).json({ message: "Erro interno do servidor" });
+        }
+        const token = jsonwebtoken_1.default.sign({ userId: user.id }, secret, { expiresIn: "1h" });
+        console.log("Generated Token:", token);
+        return res.status(200).json({ token });
     }
-    const token = jsonwebtoken_1.default.sign({ userId: user.id }, process.env.JWT_SECRET || "mySuperSecretKey12345!", { expiresIn: "1h" });
-    return res.status(200).json({ token });
+    catch (error) {
+        console.error("Erro ao realizar login:", error);
+        return res.status(500).json({ message: "Erro interno do servidor" });
+    }
 });
 exports.login = login;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
-    const newUser = yield userService_1.default.createUser(username, password);
-    if (!newUser) {
-        return res.status(400).json({ message: "Erro ao criar usuário" });
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res
+                .status(400)
+                .json({ message: "Usuário e senha são obrigatórios" });
+        }
+        const newUser = yield userService_1.default.createUser(username, password);
+        if (!newUser) {
+            return res.status(400).json({
+                message: "Erro ao criar usuário. Verifique se o nome de usuário já está em uso.",
+            });
+        }
+        return res.status(201).json({ message: "Usuário criado com sucesso" });
     }
-    return res.status(201).json({ message: "Usuário criado com sucesso" });
+    catch (error) {
+        console.error("Erro ao criar usuário:", error);
+        return res.status(500).json({ message: "Erro interno do servidor" });
+    }
 });
 exports.register = register;

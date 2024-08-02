@@ -24,3 +24,5 @@ export default class UserModel {
     return prisma.user.findMany();
   }
 }
+
+export { User };
