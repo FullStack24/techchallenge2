@@ -22,24 +22,28 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-docker@v2
 
-      - name: Build Docker image
-        run: docker build -t my-app:latest .
+      - name: Build Docker images
+        run: docker-compose build
 
       - name: Run Prisma Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run --rm --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest npx prisma migrate deploy
+        run: |
+          docker-compose run --rm app npx prisma migrate deploy
 
       - name: Run Tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker run --rm --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest npm test
+        run: |
+          docker-compose run --rm app npm test
+
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker-compose down
 
       - name: Deploy to Production
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          docker run -d -p 3000:3000 --env DATABASE_URL=${{ secrets.DATABASE_URL_DOCKER }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} my-app:latest
+          docker-compose up -d
