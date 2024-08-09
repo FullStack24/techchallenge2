@@ -1,5 +1,8 @@
 # Educa Blog Node.js
 
+## Problema
+Atualmente, a maior parte de professores e professoras da rede pública de educação não têm plataformas onde postar suas aulas e transmitir conhecimento para alunos e alunas de forma prática, centralizada e tecnológica. O EducaBlog foi criado para resolver esse problema, proporcionando uma plataforma dinâmica e acessível para que professores possam compartilhar conhecimento com seus alunos de forma eficiente.
+
 ## Descrição
 
 O EducaBlog é uma aplicação de blogging projetada para professores da rede pública de educação, permitindo que eles postem e compartilhem conteúdo educativo com seus alunos.
@@ -7,39 +10,49 @@ O EducaBlog é uma aplicação de blogging projetada para professores da rede p�
 ## Setup Inicial
 
 1. Clone o repositório:
-   ```bash
-   git clone https://github.com/seu-usuario/techchallenge2.git
-   cd techchallenge2
-   ```
-2. Instale as dependências:
+```bash
+git clone https://github.com/seu-usuario/techchallenge2.git
+cd techchallenge2
+```
 
-   ```bash
-   npm install
-   ```
+2. Instale as dependências:
+```bash
+npm install
+```
 
 3. Configure as variáveis de ambiente:
 Crie um arquivo .env na raiz do projeto e adicione as seguintes variáveis:
-    ```bash
-    DATABASE_URL="postgresql://educablog:123456@localhost:5432/educablog?schema=public"
-    ```
+```bash
+DATABASE_URL=postgresql://educablog:123456@db:5432/educablog?schema=public
+JWT_SECRET=F6&uP!5m@6B0g3vR8kL*Q9z7D
+ ```
 
 4. Inicie o banco de dados com o Docker:
 
 ```bash
-docker run --name mypostgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=123456 -d -p 5432:5432 postgres:latest
+docker-compose up --build  
 ```
 
 5. Faça a conexão com o banco de dados no Docker, com o auxílio do Prisma:
 
 ```bash
-  npx prisma generate client
-  npx prisma db push
+npx prisma generate client
+npx prisma db push
 ```
 
 6. Inicie a aplicação:
-   ```bash
-   npm start
-   ```
+```bash
+npm start
+```
+   
+# Experiências e Desafios
+
+Durante o desenvolvimento deste projeto, enfrentamos diversos desafios, como a integração de autenticação e autorização, garantia de cobertura de testes e configuração de workflows de CI/CD. Cada desafio foi uma oportunidade de aprendizado e crescimento para a equipe.
+**Desafios Técnicos:**
+- Implementação da autenticação JWT.
+- Integração com o banco de dados PostgreSQL.
+- Garantia de cobertura mínima de 30% de testes unitários.
+- Configuração e automação de CI/CD com GitHub Actions.
 
 # Arquitetura da Aplicação
 
@@ -69,7 +82,8 @@ techchallenge2
 │   │
 │   ├── controllers/
 │   │   ├── authController.ts
-│   │   └── postController.ts
+│   │   ├── postController.ts
+│   │   └── userController.ts
 │   │
 │   ├── errors/
 │   │   └── AppError.ts
@@ -85,7 +99,7 @@ techchallenge2
 │   │
 │   ├── models/
 │   │   ├── postModel.ts
-│   │   └── UserModel.ts
+│   │   └── userModel.ts
 │   │
 │   ├── repositories/
 │   │   ├── postRepository.ts
@@ -93,7 +107,8 @@ techchallenge2
 │   │
 │   ├── routes/
 │   │   ├── authRoutes.ts
-│   │   └── postRoutes.ts
+│   │   ├── postRoutes.ts
+│   │   └── userRoutes.ts
 │   │
 │   ├── services/
 │   │   ├── postService.ts
@@ -108,12 +123,12 @@ techchallenge2
 │   │   └── yamljs.d.ts
 │   │
 │   ├── utils/
+│   │   ├── checkEnv.ts
 │   │   └── getIdFromToken.ts
 │   │
 │   └── app.ts
 │
 ├── .env
-├── .env.docker
 ├── .gitignore
 ├── combined.log
 ├── docker-compose.yml
@@ -127,7 +142,7 @@ techchallenge2
 ├── README.md
 ├── swagger.yaml
 ├── tsconfig.json
-└── tsconfig.build.json                   
+└── tsconfig.build.json
 ````
 
 
@@ -135,6 +150,9 @@ techchallenge2
 
 ### Endpoints
 
+* **GET /api/users**: Lista todos os usuários.
+* **POST /api/register**: Registra um novo usuário.
+* **POST /api/login**: Autentica um usuário e retorna um token JWT.
 * **GET /api/posts**: Lista todos os posts. (Requer autenticação).
 * **GET /api/posts/:id**: Obtém um post por ID. (Requer autenticação).
 * **POST /api/posts**: Cria um novo post (Requer autenticação).
@@ -143,6 +161,71 @@ techchallenge2
 * **GET /api/posts/search?q=palavra-chave**: Busca posts por palavra-chave.
 
 ### Exemplos de Requisição e Resposta
+
+### GET /api/users
+
+```http
+GET /api/users HTTP/1.1
+Host: localhost:3000
+```
+### Resposta
+    
+    ```json
+    [
+        {
+            "id": 1,
+            "username": "usuario1",
+            "createdAt": "2024-08-09T12:34:56.000Z",
+            "updatedAt": "2024-08-09T12:34:56.000Z"
+        }
+    ]
+
+    ```
+
+### POST /api/register
+
+```http
+POST /api/register HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+    
+        {
+            "username": "usuario2",
+            "password": "senhaSegura"
+        }
+```
+
+### Resposta:
+
+```json
+    {
+      "id": 2,
+      "username": "usuario2",
+      "createdAt": "2024-08-09T12:34:56.000Z",
+      "updatedAt": "2024-08-09T12:34:56.000Z"
+    }
+```
+
+### POST /api/login
+
+```http     
+POST /api/login HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+    
+        {
+            "username": "usuario2",
+            "password": "senhaSegura"
+        }
+```
+
+### Resposta
+```json
+    {
+        "token": "seu_token_jwt"
+    }
+```
+        
 
 ### GET /api/posts
 
@@ -285,8 +368,8 @@ Authorization: Bearer seu_token_jwt
 ### Variáveis de Ambiente
 Certifique-se de configurar as seguintes variáveis de ambiente no arquivo `.env`:
 
-* `DATABASE_URL`="postgresql://educablog:123456@localhost:5432/educablog?schema=public"
-
+* `DATABASE_URL`=postgresql://educablog:123456@db:5432/educablog?schema=public
+* `JWT_SECRET`=F6&uP!5m@6B0g3vR8kL*Q9z7D
 ### Scripts Disponíveis
 
 **start**: Inicia a aplicação com `ts-node` para executar `src/app.ts`.
@@ -352,6 +435,21 @@ Para rodar a aplicação usando Docker:
 docker-compose up --build
 ```
 
+## Cobertura de Testes
+O projeto deve garantir que pelo menos 30% do código seja coberto por testes unitários. Para verificar a cobertura de testes, você pode usar o Jest com a seguinte configuração:
+
+1. Execute os testes com cobertura:
+   ```bash
+   npm test -- --coverage
+   ```
+2. O relatório de cobertura será gerado na pasta coverage/. Você pode visualizar o índice de cobertura e as partes do código que estão sendo testadas.
+
+## Autenticação e Autorização
+A aplicação utiliza JSON Web Tokens (JWT) para autenticação de usuários. Ao fazer login, um token é gerado e deve ser incluído no cabeçalho `Authorization` das requisições para os endpoints que requerem autenticação.
+
+1. **Login**: O endpoint `/api/login` permite que os usuários se autentiquem e recebam um token JWT.
+2. **Proteção dos Endpoints**: Os endpoints que modificam dados (POST, PUT, DELETE) estão protegidos por um middleware de autenticação que verifica a validade do token antes de permitir a execução das operações.
+
 # CI/CD com GitHub Actions
 
 ### Workflow de CI/CD
@@ -374,32 +472,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Set up Docker
-      uses: docker/setup-docker@v2
-      with:
-        docker-version: 'latest'
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-    - name: Build Docker image
-      run: docker build -t my-app:latest .
+      - name: Build Docker images
+        run: docker-compose build
 
-    - name: Run Prisma Migrations
-      run: docker run --rm my-app:latest npx prisma migrate deploy
+      - name: Run Prisma Migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+        run: |
+          docker-compose run --rm app npx prisma migrate deploy
 
-    - name: Run Tests
-      run: docker run --rm my-app:latest npm test
+      - name: Run Tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+        run: |
+          docker-compose run --rm app npm test
 
-    - name: Deploy to Production
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      run: |
-        docker run -d -p 3000:3000 my-app:latest
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker-compose down
+
+      - name: Deploy to Production
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          docker-compose up -d
 ````
 
 # Contribuição
@@ -411,6 +519,21 @@ Se você deseja contribuir com este projeto, siga os passos abaixo:
 3. Commit suas mudanças (git commit -am 'Adiciona nova feature').
 4. Push para a branch (git push origin feature/nova-feature).
 5. Abra um Pull Request.
+
+# Equipe
+
+* Ariel Andrielli Rodrigues da Silva
+* Gustavo Almeida Carriel
+* José Luccas Gabriel Francisco de Andrade Santos
+* Vitor Vilson Laurentino
+* Thwany Leles
+
+## Considerações Finais
+O EducaBlog é uma ferramenta projetada para facilitar a comunicação entre professores e alunos, promovendo um ambiente de aprendizado mais dinâmico e acessível. Acreditamos que com a implementação deste projeto, conseguiremos oferecer uma plataforma que atenda às necessidades da educação pública.
+
+Agradecemos a todos que contribuíram para este projeto e esperamos que ele possa ser uma ferramenta valiosa para a comunidade educacional.
+
+**Nota**: Este README é um documento vivo e será atualizado conforme novas funcionalidades e melhorias forem implementadas.
 
 # Licença
 
