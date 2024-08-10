@@ -11,15 +11,23 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  wait-for-db:
+    image: busybox
+    depends_on:
+      - db
+    command: sh -c 'until nc -z db 5432; do echo waiting for db; sleep 1; done;'
+
   app:
     build: .
     environment:
       DATABASE_URL: postgresql://educablog:123456@db:5432/educablog?schema=public
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
-      - db
-    command: [ "sh", "-c", "sleep 10 && npx prisma generate && npm start" ]
+      - wait-for-db
+    volumes:
+      - .:/usr/src/app
+    command: [ "sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm start" ]
 
 volumes:
   db_data:
