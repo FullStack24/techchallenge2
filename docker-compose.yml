@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:latest
@@ -21,7 +23,14 @@ services:
       - "3000:3000"
     depends_on:
       - db
-    command: ["sh", "-c", "sleep 10 && npx prisma generate && npm start"]
+    command: >
+      sh -c "
+        until nc -z db 5432; do
+          echo 'Waiting for the database...';
+          sleep 2;
+        done;
+        npx prisma generate && npm start
+      "
 
 volumes:
   db_data:

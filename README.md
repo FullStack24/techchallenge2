@@ -33,16 +33,16 @@ JWT_SECRET=F6&uP!5m@6B0g3vR8kL*Q9z7D
 docker-compose up --build  
 ```
 
-5. Faça a conexão com o banco de dados no Docker, com o auxílio do Prisma:
+5. Gere o cliente Prisma e aplique as migrações:
 
 ```bash
-npx prisma generate client
-npx prisma db push
+npx prisma generate
+docker-compose exec app npx prisma db push
 ```
 
 6. Inicie a aplicação:
 ```bash
-npm start
+docker-compose up
 ```
    
 # Experiências e Desafios
