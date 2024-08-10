@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
     <h2>Endpoints principais:</h2>
     <ul>
       <li><strong>GET /api/users</strong>: Lista todos os usuários.</li>
-      <li><strong>POST /api/register</strong>: Registra um novo usuário.</li>
-      <li><strong>POST /api/login</strong>: Autentica um usuário e retorna um token JWT.</li>
+      <li><strong>POST /api/auth/register</strong>: Registra um novo usuário.</li>
+      <li><strong>POST /api/auth/login</strong>: Autentica um usuário e retorna um token JWT.</li>
       <li><strong>GET /api/posts</strong>: Lista todos os posts (Requer autenticação).</li>
       <li><strong>GET /api/posts/:id</strong>: Obtém um post por ID (Requer autenticação).</li>
       <li><strong>POST /api/posts</strong>: Cria um novo post (Requer autenticação).</li>

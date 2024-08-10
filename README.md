@@ -151,8 +151,8 @@ techchallenge2
 ### Endpoints
 
 * **GET /api/users**: Lista todos os usuários.
-* **POST /api/register**: Registra um novo usuário.
-* **POST /api/login**: Autentica um usuário e retorna um token JWT.
+* **POST /api/auth/register**: Registra um novo usuário.
+* **POST /api/auth/login**: Autentica um usuário e retorna um token JWT.
 * **GET /api/posts**: Lista todos os posts. (Requer autenticação).
 * **GET /api/posts/:id**: Obtém um post por ID. (Requer autenticação).
 * **POST /api/posts**: Cria um novo post (Requer autenticação).
@@ -185,7 +185,7 @@ Host: localhost:3000
 ### POST /api/register
 
 ```http
-POST /api/register HTTP/1.1
+POST /api/auth/register HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
     
@@ -209,7 +209,7 @@ Content-Type: application/json
 ### POST /api/login
 
 ```http     
-POST /api/login HTTP/1.1
+POST /api/auth/login HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
     
