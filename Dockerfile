@@ -1,7 +1,5 @@
 FROM node:21
 
-RUN apt-get update && apt-get install -y postgresql-client && apt-get clean
-
 WORKDIR /usr/src/app
 
 COPY package*.json ./
