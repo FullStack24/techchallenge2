@@ -6,7 +6,6 @@ COPY package*.json ./
 
 RUN npm install
 
-# Instala netcat-openbsd para o script de espera
 RUN apt-get update && apt-get install -y netcat-openbsd
 
 COPY . .

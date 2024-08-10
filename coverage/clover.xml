@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1722577639594" clover="3.2.0">
-  <project timestamp="1722577639594" name="All files">
+<coverage generated="1723315486005" clover="3.2.0">
+  <project timestamp="1723315486005" name="All files">
     <metrics statements="21" coveredstatements="21" conditionals="0" coveredconditionals="0" methods="15" coveredmethods="15" elements="36" coveredelements="36" complexity="0" loc="21" ncloc="21" packages="1" files="2" classes="2"/>
     <file name="postService.ts" path="/Users/thwanyleles/WebstormProjects/techchallenge2/src/services/postService.ts">
       <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="7"/>

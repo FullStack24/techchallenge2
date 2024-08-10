@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
     <h1>Bem-vindo ao EducaBlog!</h1>
     <p>EducaBlog é uma plataforma dinâmica e acessível para que professores da rede pública possam compartilhar conteúdo educativo com seus alunos.</p>
@@ -33,7 +33,6 @@ app.get('/', (req, res) => {
     </ul>
   `);
 });
-
 
 // Roteamento
 app.use("/api", postRoutes);

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "start:dev": "ts-node -r dotenv/config src/app.ts",
-    "start:docker": "npx prisma migrate deploy && ts-node src/app.ts",
+    "docker:start": "docker-compose up --build",
     "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
