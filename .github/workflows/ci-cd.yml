@@ -23,22 +23,34 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
+
       - name: Build Docker images
         run: docker-compose build
+
+      - name: Start Docker Containers
+        run: |
+          docker-compose up -d
+
+      - name: Wait for Database to be Ready
+        run: |
+          docker-compose exec -T db sh -c "until pg_isready -h db -p 5432; do echo 'Waiting for database...'; sleep 5; done"
 
       - name: Run Prisma Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
         run: |
           docker-compose run --rm app npx prisma migrate deploy
+
       - name: Run Tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
         run: |
           docker-compose run --rm app npm test
+
       - name: Stop and Remove Existing Containers
         run: |
           docker-compose down
+
       - name: Deploy to Production
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}

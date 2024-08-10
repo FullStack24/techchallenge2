@@ -21,7 +21,7 @@ services:
       - "3000:3000"
     depends_on:
       - db
-    command: ["sh", "-c", "npx prisma generate && npm start"]
+    command: ["sh", "-c", "sleep 10 && npx prisma generate && npm start"]
 
 volumes:
   db_data:
