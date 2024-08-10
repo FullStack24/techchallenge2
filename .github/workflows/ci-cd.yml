@@ -12,56 +12,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: educablog
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: educablog
-        ports:
-          - 5434:5432  # Usar uma porta diferente no host
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Install Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      - name: Run Prisma Migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+        run: |
+          docker-compose run --rm app npx prisma migrate deploy
+
+      - name: Run Tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+        run: |
+          docker-compose run --rm app npm test
 
       - name: Stop and Remove Existing Containers
         run: |
-          docker-compose down || true
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Apply database migrations
-        env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
-        run: npx prisma migrate deploy
-
-      - name: Run tests
-        env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
-        run: npm test
-
-      - name: Build Docker image
-        run: docker-compose build
+          docker-compose down
 
       - name: Deploy to Production
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: docker-compose up -d
+        run: |
+          docker-compose up -d

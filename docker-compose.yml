@@ -1,4 +1,3 @@
-version: '3'
 services:
   db:
     image: postgres:latest
@@ -7,7 +6,7 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: educablog
     ports:
-      - "5434:5432"  # Usar a porta 5434 no host
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -16,7 +15,7 @@ services:
       - .env
     build: .
     environment:
-      DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
+      DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
       JWT_SECRET: F6&uP!5m@6B0g3vR8kL*Q9z7D
     ports:
       - "3000:3000"
