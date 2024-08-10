@@ -20,7 +20,7 @@ jobs:
           POSTGRES_PASSWORD: 123456
           POSTGRES_DB: educablog
         ports:
-          - 5433:5432
+          - 5434:5432  # Usar uma porta diferente no host
 
     steps:
       - name: Checkout code
@@ -37,6 +37,10 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker-compose down || true
+
       - name: Install dependencies
         run: npm install
 
@@ -45,23 +49,19 @@ jobs:
 
       - name: Apply database migrations
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
         run: npx prisma migrate deploy
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
         run: npm test
-
-      - name: Stop and Remove Existing Containers
-        run: |
-          docker-compose down
 
       - name: Build Docker image
         run: docker-compose build
 
       - name: Deploy to Production
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5434/educablog?schema=public  # Usar a porta 5434
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: docker-compose up -d
