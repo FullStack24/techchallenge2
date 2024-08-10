@@ -20,12 +20,7 @@ jobs:
           POSTGRES_PASSWORD: 123456
           POSTGRES_DB: educablog
         ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U educablog"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          - 5433:5432
 
     steps:
       - name: Checkout code
@@ -50,19 +45,23 @@ jobs:
 
       - name: Apply database migrations
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
         run: npx prisma migrate deploy
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
         run: npm test
+
+      - name: Stop and Remove Existing Containers
+        run: |
+          docker-compose down
 
       - name: Build Docker image
         run: docker-compose build
 
       - name: Deploy to Production
         env:
-          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
+          DATABASE_URL: postgresql://educablog:123456@localhost:5433/educablog?schema=public
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: docker-compose up -d
