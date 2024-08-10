@@ -12,40 +12,51 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: educablog
+          POSTGRES_PASSWORD: 123456
+          POSTGRES_DB: educablog
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U educablog"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Install dependencies
+        run: npm install
 
-      - name: Build Docker images
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
+        run: npx prisma migrate deploy
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
+        run: npm test
+
+      - name: Build Docker image
         run: docker-compose build
-
-      - name: Run Prisma Migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
-        run: |
-          docker-compose run --rm app npx prisma migrate deploy
-
-      - name: Run Tests
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
-        run: |
-          docker-compose run --rm app npm test
-
-      - name: Stop and Remove Existing Containers
-        run: |
-          docker-compose down
 
       - name: Deploy to Production
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DOCKER }}
+          DATABASE_URL: postgresql://educablog:123456@localhost:5432/educablog?schema=public
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: |
-          docker-compose up -d
+        run: docker-compose up -d
