@@ -162,25 +162,9 @@ techchallenge2
 
 ### Exemplos de Requisição e Resposta
 
-### GET /api/users
+### Utilize o Swagger para testar as requisições:
 
-```http
-GET /api/users HTTP/1.1
-Host: localhost:3000
-```
-### Resposta
-    
-    ```json
-    [
-        {
-            "id": 1,
-            "username": "usuario1",
-            "createdAt": "2024-08-09T12:34:56.000Z",
-            "updatedAt": "2024-08-09T12:34:56.000Z"
-        }
-    ]
-
-    ```
+```http://localhost:3000/api-docs/#/ ```
 
 ### POST /api/auth/register
 
@@ -225,6 +209,27 @@ Content-Type: application/json
         "token": "seu_token_jwt"
     }
 ```
+
+### GET /api/users
+
+```http
+GET /api/users HTTP/1.1
+Host: localhost:3000
+```
+### Resposta
+    
+    ```json
+    [
+        {
+            "id": 1,
+            "username": "usuario1",
+            "createdAt": "2024-08-09T12:34:56.000Z",
+            "updatedAt": "2024-08-09T12:34:56.000Z"
+        }
+    ]
+
+    ```
+
         
 
 ### GET /api/posts
