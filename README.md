@@ -1,5 +1,8 @@
 # Educa Blog Node.js
 
+## Link para o video
+```https://youtu.be/Fmy-0C7h7ks```
+
 ## Problema
 Atualmente, a maior parte de professores e professoras da rede pública de educação não têm plataformas onde postar suas aulas e transmitir conhecimento para alunos e alunas de forma prática, centralizada e tecnológica. O EducaBlog foi criado para resolver esse problema, proporcionando uma plataforma dinâmica e acessível para que professores possam compartilhar conhecimento com seus alunos de forma eficiente.
 
