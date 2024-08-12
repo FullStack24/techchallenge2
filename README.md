@@ -182,7 +182,7 @@ Host: localhost:3000
 
     ```
 
-### POST /api/register
+### POST /api/auth/register
 
 ```http
 POST /api/auth/register HTTP/1.1
@@ -206,7 +206,7 @@ Content-Type: application/json
     }
 ```
 
-### POST /api/login
+### POST /api/auth/login
 
 ```http     
 POST /api/auth/login HTTP/1.1
@@ -447,7 +447,7 @@ O projeto deve garantir que pelo menos 30% do código seja coberto por testes un
 ## Autenticação e Autorização
 A aplicação utiliza JSON Web Tokens (JWT) para autenticação de usuários. Ao fazer login, um token é gerado e deve ser incluído no cabeçalho `Authorization` das requisições para os endpoints que requerem autenticação.
 
-1. **Login**: O endpoint `/api/login` permite que os usuários se autentiquem e recebam um token JWT.
+1. **Login**: O endpoint `/api/auth/login` permite que os usuários se autentiquem e recebam um token JWT.
 2. **Proteção dos Endpoints**: Os endpoints que modificam dados (POST, PUT, DELETE) estão protegidos por um middleware de autenticação que verifica a validade do token antes de permitir a execução das operações.
 
 # CI/CD com GitHub Actions
