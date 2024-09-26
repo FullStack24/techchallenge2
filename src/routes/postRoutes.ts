@@ -18,6 +18,8 @@ const router = Router();
 router.get("/posts", getAllPosts);
 router.get("/posts/search", searchPosts);
 router.get("/posts/:id", getPostById);
+router.get("/posts/admin", authMiddleware, getAllPosts);
+
 
 router.post(
   "/posts",
