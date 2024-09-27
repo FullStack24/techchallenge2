@@ -27,6 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
+const cors_1 = __importDefault(require("cors"));
 dotenv.config();
 const express_1 = __importDefault(require("express"));
 const postRoutes_1 = __importDefault(require("./routes/postRoutes"));
@@ -37,8 +38,11 @@ const errorHandler_1 = __importDefault(require("./middlewares/errorHandler"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3001',
+}));
 app.use(express_1.default.json());
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.send(`
     <h1>Bem-vindo ao EducaBlog!</h1>
     <p>EducaBlog é uma plataforma dinâmica e acessível para que professores da rede pública possam compartilhar conteúdo educativo com seus alunos.</p>
@@ -46,8 +50,8 @@ app.get('/', (req, res) => {
     <h2>Endpoints principais:</h2>
     <ul>
       <li><strong>GET /api/users</strong>: Lista todos os usuários.</li>
-      <li><strong>POST /api/register</strong>: Registra um novo usuário.</li>
-      <li><strong>POST /api/login</strong>: Autentica um usuário e retorna um token JWT.</li>
+      <li><strong>POST /api/auth/register</strong>: Registra um novo usuário.</li>
+      <li><strong>POST /api/auth/login</strong>: Autentica um usuário e retorna um token JWT.</li>
       <li><strong>GET /api/posts</strong>: Lista todos os posts (Requer autenticação).</li>
       <li><strong>GET /api/posts/:id</strong>: Obtém um post por ID (Requer autenticação).</li>
       <li><strong>POST /api/posts</strong>: Cria um novo post (Requer autenticação).</li>

@@ -13,14 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userRepository_1 = __importDefault(require("../repositories/userRepository"));
-const validateUser = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-    return userRepository_1.default.validateUser(username, password);
+const validateUser = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.validateUser(email, password);
 });
 const getUserById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     return userRepository_1.default.getUserById(userId);
 });
-const createUser = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-    return userRepository_1.default.createUser(username, password);
+const createUser = (username, email, password) => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.createUser(username, email, password);
 });
 const listAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     return userRepository_1.default.findAll();

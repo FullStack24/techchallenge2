@@ -12,16 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const UserRepository = {
-    validateUser(username, password) {
+    validateUser(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             return prisma.user.findFirst({
                 where: {
-                    username,
+                    email,
                     password,
                 },
                 select: {
                     id: true,
                     username: true,
+                    email: true,
                     password: true,
                     createdAt: true,
                     updatedAt: true,
@@ -36,6 +37,7 @@ const UserRepository = {
                 select: {
                     id: true,
                     username: true,
+                    email: true,
                     password: true,
                     createdAt: true,
                     updatedAt: true,
@@ -43,16 +45,18 @@ const UserRepository = {
             });
         });
     },
-    createUser(username, password) {
+    createUser(username, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             return prisma.user.create({
                 data: {
                     username,
+                    email,
                     password,
                 },
                 select: {
                     id: true,
                     username: true,
+                    email: true,
                     password: true,
                     createdAt: true,
                     updatedAt: true,
@@ -66,6 +70,7 @@ const UserRepository = {
             return users.map((user) => ({
                 id: user.id,
                 username: user.username,
+                email: user.email,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             }));

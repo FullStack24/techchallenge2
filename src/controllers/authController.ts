@@ -4,21 +4,20 @@ import userService from "../services/userService";
 
 const login = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res
           .status(400)
           .json({ message: "Usuário e senha são obrigatórios" });
     }
 
-    const user = await userService.validateUser(username, password);
+    const user = await userService.validateUser(email, password);
     if (!user) {
       return res.status(401).json({ message: "Credenciais inválidas" });
     }
 
     const secret = process.env.JWT_SECRET;
-    console.log("JWT_SECRET from env:", secret);
 
     if (!secret) {
       console.error("Chave secreta JWT não definida");
@@ -27,14 +26,12 @@ const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ userId: user.id }, secret, { expiresIn: "1h" });
 
-    console.log("Generated Token:", token);
-
-    // Inclua os dados do usuário na resposta
     return res.status(200).json({
       token,
       user: {
         id: user.id,
-        username: user.username
+        email: user.email,
+        username: user.username,
       },
     });
   } catch (error) {
@@ -45,15 +42,15 @@ const login = async (req: Request, res: Response) => {
 
 const register = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!username || !password) {
+    if (!username || !email || !password) {
       return res
           .status(400)
-          .json({ message: "Usuário e senha são obrigatórios" });
+          .json({ message: "Usuário, email e senha são obrigatórios" });
     }
 
-    const newUser = await userService.createUser(username, password);
+    const newUser = await userService.createUser(username, email, password);
     if (!newUser) {
       return res.status(400).json({
         message:

@@ -15,6 +15,7 @@ describe("UserService", () => {
   const createdUserMock: IUser = {
     id: "1",
     username: "newuser",
+    email: "email@email.com",
     password: "newpassword",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -24,12 +25,14 @@ describe("UserService", () => {
     {
       id: "1",
       username: "user1",
+      email: "email1@email.com",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       id: "2",
       username: "user2",
+      email: "email2@email.com",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -65,10 +68,11 @@ describe("UserService", () => {
   it("deve criar um novo usuário e retorná-lo", async () => {
     (UserRepository.createUser as jest.Mock).mockResolvedValue(createdUserMock);
 
-    const result = await userService.createUser("newuser", "newpassword");
+    const result = await userService.createUser("newuser", "newemail","newpassword");
     expect(result).toEqual(createdUserMock);
     expect(UserRepository.createUser).toHaveBeenCalledWith(
       "newuser",
+      "newemail",
       "newpassword",
     );
   });

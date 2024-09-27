@@ -17,25 +17,30 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userService_1 = __importDefault(require("../services/userService"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username, password } = req.body;
-        if (!username || !password) {
+        const { email, password } = req.body;
+        if (!email || !password) {
             return res
                 .status(400)
                 .json({ message: "Usuário e senha são obrigatórios" });
         }
-        const user = yield userService_1.default.validateUser(username, password);
+        const user = yield userService_1.default.validateUser(email, password);
         if (!user) {
             return res.status(401).json({ message: "Credenciais inválidas" });
         }
         const secret = process.env.JWT_SECRET;
-        console.log("JWT_SECRET from env:", secret);
         if (!secret) {
             console.error("Chave secreta JWT não definida");
             return res.status(500).json({ message: "Erro interno do servidor" });
         }
         const token = jsonwebtoken_1.default.sign({ userId: user.id }, secret, { expiresIn: "1h" });
-        console.log("Generated Token:", token);
-        return res.status(200).json({ token });
+        return res.status(200).json({
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+            },
+        });
     }
     catch (error) {
         console.error("Erro ao realizar login:", error);
@@ -45,13 +50,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.login = login;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username, password } = req.body;
-        if (!username || !password) {
+        const { username, email, password } = req.body;
+        if (!username || !email || !password) {
             return res
                 .status(400)
-                .json({ message: "Usuário e senha são obrigatórios" });
+                .json({ message: "Usuário, email e senha são obrigatórios" });
         }
-        const newUser = yield userService_1.default.createUser(username, password);
+        const newUser = yield userService_1.default.createUser(username, email, password);
         if (!newUser) {
             return res.status(400).json({
                 message: "Erro ao criar usuário. Verifique se o nome de usuário já está em uso.",

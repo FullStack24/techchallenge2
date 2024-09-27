@@ -5,17 +5,18 @@ const prisma = new PrismaClient();
 
 const UserRepository = {
   async validateUser(
-    username: string,
+    email: string,
     password: string,
   ): Promise<IUser | null> {
     return prisma.user.findFirst({
       where: {
-        username,
+        email,
         password,
       },
       select: {
         id: true,
         username: true,
+        email: true,
         password: true,
         createdAt: true,
         updatedAt: true,
@@ -29,6 +30,7 @@ const UserRepository = {
       select: {
         id: true,
         username: true,
+        email: true,
         password: true,
         createdAt: true,
         updatedAt: true,
@@ -36,15 +38,17 @@ const UserRepository = {
     }) as Promise<IUser | null>;
   },
 
-  async createUser(username: string, password: string): Promise<IUser> {
+  async createUser(username: string, email: string, password: string): Promise<IUser> {
     return prisma.user.create({
       data: {
         username,
+        email,
         password,
       },
       select: {
         id: true,
         username: true,
+        email: true,
         password: true,
         createdAt: true,
         updatedAt: true,
@@ -57,6 +61,7 @@ const UserRepository = {
     return users.map((user) => ({
       id: user.id,
       username: user.username,
+      email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));
