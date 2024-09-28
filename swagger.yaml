@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Blogging API
   version: 1.0.0
-  description: API para gerenciamento de posts de blogging, incluindo criação, leitura, atualização e exclusão de posts.
+  description: API para gerenciamento de posts de blogging, incluindo criação, leitura, atualização e exclusão de posts e comentários.
 servers:
   - url: http://localhost:3000/api
 components:
@@ -54,6 +54,9 @@ components:
         username:
           type: string
           example: "novoUsuario"
+        email:
+          type: string
+          example: "usuario@example.com"
         password:
           type: string
           example: "senhaSegura"
@@ -65,6 +68,37 @@ components:
           username:
             type: string
             example: "usuario"
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "456e7890-e12b-34d5-a456-426614174001"
+        post_id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        author:
+          type: string
+          example: "Jane Doe"
+        content:
+          type: string
+          example: "Este é um comentário sobre o post."
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-08-01T12:34:56Z"
+    CommentInput:
+      type: object
+      properties:
+        post_id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        author:
+          type: string
+          example: "Jane Doe"
+        content:
+          type: string
+          example: "Este é um comentário sobre o post."
     Error:
       type: object
       properties:
@@ -126,8 +160,6 @@ paths:
     post:
       summary: "Cria um novo post"
       description: "Cria um novo post no sistema."
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -255,6 +287,169 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /posts/{postId}/comments:
+    get:
+      summary: "Lista todos os comentários de um post"
+      description: "Retorna uma lista de todos os comentários associados a um post específico."
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: "ID do post para o qual os comentários estão associados"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Lista de comentários retornada com sucesso"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        404:
+          description: "Post com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar recuperar os comentários"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: "Cria um novo comentário"
+      description: "Cria um novo comentário para um post específico."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+      responses:
+        201:
+          description: "Comentário criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: "Dados inválidos fornecidos para criar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar criar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /comments/{id}:
+    get:
+      summary: "Obtém um comentário por ID"
+      description: "Retorna um comentário específico baseado no ID fornecido."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do comentário a ser retornado"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Comentário encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        404:
+          description: "Comentário com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar recuperar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: "Atualiza um comentário existente"
+      description: "Atualiza um comentário existente baseado no ID fornecido."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do comentário a ser atualizado"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentInput'
+      responses:
+        200:
+          description: "Comentário atualizado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: "Dados inválidos fornecidos para atualizar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: "Comentário com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar atualizar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: "Deleta um comentário existente"
+      description: "Remove um comentário do sistema baseado no ID fornecido."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do comentário a ser deletado"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Comentário deletado com sucesso"
+        404:
+          description: "Comentário com o ID fornecido não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: "Erro interno ao tentar deletar o comentário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /auth/login:
     post:
       summary: "Realiza login"
@@ -266,9 +461,9 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                email:
                   type: string
-                  example: "usuario"
+                  example: "usuario@example.com"
                 password:
                   type: string
                   example: "senha"
@@ -304,7 +499,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "novoUsuario"
+                email:
+                  type: string
+                  example: "usuario@example.com"
+                password:
+                  type: string
+                  example: "senhaSegura"
       responses:
         201:
           description: "Usuário criado com sucesso"

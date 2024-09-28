@@ -31,3 +31,35 @@ export const validatePost = (
   }
   next();
 };
+
+export const commentValidationRules = () => {
+  return [
+    check("author")
+        .optional()
+        .isString()
+        .withMessage("O autor deve ser uma string."),
+    check("content")
+        .notEmpty()
+        .withMessage("O conteúdo é obrigatório.")
+        .isString()
+        .withMessage("O conteúdo deve ser uma string.")
+        .isLength({ max: 5000 })
+        .withMessage("O conteúdo deve ter no máximo 5000 caracteres."),
+  ];
+};
+
+export const validateComment = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      error: "Dados de entrada inválidos.",
+      message: "Verifique os erros abaixo e tente novamente.",
+      errors: errors.array(),
+    });
+  }
+  next();
+};

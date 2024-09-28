@@ -28,14 +28,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-dotenv.config();
 const express_1 = __importDefault(require("express"));
 const postRoutes_1 = __importDefault(require("./routes/postRoutes"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const commentRoutes_1 = __importDefault(require("./routes/commentRoutes"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const yamljs_1 = __importDefault(require("yamljs"));
 const errorHandler_1 = __importDefault(require("./middlewares/errorHandler"));
-const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+dotenv.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use((0, cors_1.default)({
@@ -58,6 +59,8 @@ app.get("/", (req, res) => {
       <li><strong>PUT /api/posts/:id</strong>: Atualiza um post existente (Requer autenticação).</li>
       <li><strong>DELETE /api/posts/:id</strong>: Exclui um post (Requer autenticação).</li>
       <li><strong>GET /api/posts/search?q=palavra-chave</strong>: Busca posts por palavra-chave (Requer autenticação).</li>
+      <li><strong>POST /api/posts/:postId/comments</strong>: Cria um novo comentário (Requer autenticação).</li>
+      <li><strong>DELETE /api/comments/:id</strong>: Exclui um comentário (Requer autenticação).</li>
     </ul>
   `);
 });
@@ -65,6 +68,7 @@ app.get("/", (req, res) => {
 app.use("/api", postRoutes_1.default);
 app.use("/api/auth", authRoutes_1.default);
 app.use("/api", userRoutes_1.default);
+app.use("/api", commentRoutes_1.default);
 // Middleware de manejo de erros
 app.use(errorHandler_1.default);
 // Configuração do Swagger
