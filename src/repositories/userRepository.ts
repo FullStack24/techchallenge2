@@ -38,17 +38,19 @@ const UserRepository = {
     }) as Promise<IUser | null>;
   },
 
-  async createUser(username: string, email: string, password: string): Promise<IUser> {
+  async createUser(username: string, email: string, password: string, role: string): Promise<IUser> {
     return prisma.user.create({
       data: {
         username,
         email,
         password,
+        role,
       },
       select: {
         id: true,
         username: true,
         email: true,
+        role: true,
         password: true,
         createdAt: true,
         updatedAt: true,
@@ -62,6 +64,7 @@ const UserRepository = {
       id: user.id,
       username: user.username,
       email: user.email,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));

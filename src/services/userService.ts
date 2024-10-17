@@ -16,8 +16,9 @@ const createUser = async (
   username: string,
   email: string,
   password: string,
+  role: string,
 ): Promise<IUser> => {
-  return UserRepository.createUser(username, email, password);
+  return UserRepository.createUser(username, email, password, role);
 };
 
 const listAllUsers = async (): Promise<Omit<IUser, "password">[]> => {
