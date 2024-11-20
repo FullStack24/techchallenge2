@@ -21,8 +21,16 @@ const createUser = async (
   return UserRepository.createUser(username, email, password, role);
 };
 
+const updateUser = async (userId: string, userData: Partial<IUser>): Promise<IUser | null> => {
+  return UserRepository.updateUser(userId, userData);
+};
+
 const listAllUsers = async (): Promise<Omit<IUser, "password">[]> => {
   return UserRepository.findAll();
 };
 
-export default { validateUser, getUserById, createUser, listAllUsers };
+const deleteUser = async (userId: string): Promise<void> => {
+  return UserRepository.deleteUser(userId);
+};
+
+export default { validateUser, getUserById, createUser, listAllUsers, deleteUser, updateUser };
