@@ -27,6 +27,10 @@ class CommentService {
     async deleteComment(id: string): Promise<void> {
         await this.commentRepository.delete(id);
     }
+
+    async replyToComment(data: Omit<IComment, "id" | "created_at">): Promise<IComment> {
+        return this.commentRepository.createReply(data);
+    }
 }
 
 export default new CommentService(CommentRepository);

@@ -13,9 +13,7 @@ const authMiddleware = (req, res, next) => {
             message: "O cabeçalho de autorização não foi encontrado. Certifique-se de enviar um token no formato 'Bearer <token>'.",
         });
     }
-    const token = authorization.startsWith("Bearer ")
-        ? authorization.slice(7)
-        : null;
+    const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : null;
     console.log("Extracted Token:", token);
     if (!token) {
         return res.status(401).json({
@@ -25,14 +23,23 @@ const authMiddleware = (req, res, next) => {
     }
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-        console.error("JWT_SECRET is not set");
+        console.error("JWT_SECRET não está definido");
         return res.status(500).json({
             error: "Chave secreta não configurada.",
             message: "A chave secreta para verificar o token de autorização não está configurada.",
         });
     }
     try {
-        req.user = jsonwebtoken_1.default.verify(token, secret);
+        const decoded = jsonwebtoken_1.default.verify(token, secret);
+        console.log("Decoded Token:", decoded);
+        if (!decoded || !decoded.userId) {
+            return res.status(401).json({
+                error: "Token inválido.",
+                message: "O token de autorização não contém um 'userId' válido.",
+            });
+        }
+        req.user = { id: decoded.userId, role: decoded.role };
+        console.log("Decoded User:", req.user);
         next();
     }
     catch (err) {

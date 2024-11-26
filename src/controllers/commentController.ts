@@ -1,62 +1,83 @@
 import { Request, Response } from "express";
 import CommentService from "../services/commentService";
 
-const createComment = async (req: Request, res: Response) => {
-    const { postId } = req.params;
-    const { author, content }: { author: string; content: string } = req.body;
-
-    console.log("postId recebido:", postId);
-
+export const createComment = async (req: Request, res: Response) => {
     try {
-        const comment = await CommentService.createComment({ post_id: postId, author, content });
+        const { postId, author, content } = req.body;
+        const comment = await CommentService.createComment({
+            post_id: postId,
+            author,
+            content,
+        });
         res.status(201).json(comment);
     } catch (error) {
-        console.error('Erro ao criar comentário:', error);
-        res.status(500).json({ message: "Erro ao criar comentário" });
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Unexpected error" });
+        }
     }
 };
 
-const getCommentsByPost = async (req: Request, res: Response) => {
-    const { postId } = req.params;
+export const getCommentsByPost = async (req: Request, res: Response) => {
     try {
+        const { postId } = req.params;
         const comments = await CommentService.getCommentsByPost(postId);
         res.status(200).json(comments);
     } catch (error) {
-        console.error('Erro ao buscar comentários:', error);
-        res.status(500).json({ message: "Erro ao buscar comentários" });
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Unexpected error" });
+        }
     }
 };
 
-const updateComment = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { author, content } = req.body;
-
+export const updateComment = async (req: Request, res: Response) => {
     try {
+        const { id } = req.params;
+        const { author, content } = req.body;
         const updatedComment = await CommentService.updateComment(id, { author, content });
-        if (!updatedComment) {
-            return res.status(404).json({ message: "Comentário não encontrado" });
-        }
         res.status(200).json(updatedComment);
     } catch (error) {
-        console.error('Erro ao atualizar comentário:', error);
-        res.status(500).json({ message: "Erro ao atualizar comentário" });
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Unexpected error" });
+        }
     }
 };
 
-const deleteComment = async (req: Request, res: Response) => {
-    const { id } = req.params;
+export const deleteComment = async (req: Request, res: Response) => {
     try {
+        const { id } = req.params;
         await CommentService.deleteComment(id);
-        res.status(200).json({ message: "Comentário excluído com sucesso" });
+        res.status(204).send();
     } catch (error) {
-        console.error('Erro ao excluir comentário:', error);
-        res.status(500).json({ message: "Erro ao excluir comentário" });
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Unexpected error" });
+        }
     }
 };
 
-export {
-    createComment,
-    getCommentsByPost,
-    updateComment,
-    deleteComment,
+export const replyToComment = async (req: Request, res: Response) => {
+    try {
+        const { commentId } = req.params;
+        const { postId, author, content } = req.body;
+        const reply = await CommentService.replyToComment({
+            post_id: postId,
+            author,
+            content,
+            parent_id: commentId
+        });
+        res.status(201).json(reply);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Unexpected error" });
+        }
+    }
 };

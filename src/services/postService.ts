@@ -31,6 +31,18 @@ class PostService {
   async searchPosts(keyword: string): Promise<IPost[]> {
     return this.postRepository.search(keyword);
   }
+
+  async userLikedPost(userId: string, postId: string): Promise<boolean> {
+    return await this.postRepository.userLikedPost(userId, postId);
+  }
+
+  async addLike(userId: string, postId: string): Promise<void> {
+    await this.postRepository.addLike(userId, postId);
+  }
+
+  async incrementLikes(postId: string): Promise<IPost | null> {
+    return this.postRepository.incrementLikes(postId);
+  }
 }
 
 export default new PostService(PostRepository);

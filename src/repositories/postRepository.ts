@@ -26,8 +26,8 @@ const PostRepository = {
   },
 
   async update(
-    id: string,
-    data: Partial<Omit<IPost, "createdAt" | "updatedAt">>,
+      id: string,
+      data: Partial<Omit<IPost, "createdAt" | "updatedAt">>,
   ): Promise<IPost | null> {
     const { title, content = "", author } = data;
     return prisma.post.update({
@@ -54,6 +54,50 @@ const PostRepository = {
           { title: { contains: keyword, mode: "insensitive" } },
           { content: { contains: keyword, mode: "insensitive" } },
         ],
+      },
+    });
+  },
+
+  async userLikedPost(userId: string, postId: string): Promise<boolean> {
+    try {
+      const like = await prisma.like.findUnique({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+      return like !== null;
+    } catch (error) {
+      console.error("Error checking if user liked post:", error);
+      throw error;
+    }
+  },
+
+  async addLike(userId: string, postId: string): Promise<void> {
+    await prisma.like.create({
+      data: {
+        userId,
+        postId,
+      },
+    });
+  },
+
+  async incrementLikes(postId: string): Promise<IPost | null> {
+    return prisma.post.update({
+      where: { id: postId },
+      data: {
+        likes: {
+          increment: 1,
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: true,
+        likes: true,
       },
     });
   },

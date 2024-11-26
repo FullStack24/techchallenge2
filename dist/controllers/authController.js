@@ -19,12 +19,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({ message: "Usuário e senha são obrigatórios" });
+            return res.status(400).json({ message: "Usuário e senha são obrigatórios" });
         }
         const user = yield userService_1.default.validateUser(email, password);
+        console.log("User found:", user);
         if (!user) {
+            console.log("Invalid credentials for:", email);
             return res.status(401).json({ message: "Credenciais inválidas" });
         }
         const secret = process.env.JWT_SECRET;
@@ -32,13 +32,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             console.error("Chave secreta JWT não definida");
             return res.status(500).json({ message: "Erro interno do servidor" });
         }
-        const token = jsonwebtoken_1.default.sign({ userId: user.id }, secret, { expiresIn: "1h" });
+        const token = jsonwebtoken_1.default.sign({ userId: user.id, role: user.role }, secret, { expiresIn: "1h" });
         return res.status(200).json({
             token,
             user: {
                 id: user.id,
                 email: user.email,
                 username: user.username,
+                role: user.role,
             },
         });
     }
@@ -50,19 +51,23 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.login = login;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username, email, password } = req.body;
-        if (!username || !email || !password) {
-            return res
-                .status(400)
-                .json({ message: "Usuário, email e senha são obrigatórios" });
+        const { username, email, password, role } = req.body;
+        if (!username || !email || !password || !role) {
+            return res.status(400).json({ message: "Usuário, email e senha são obrigatórios" });
         }
-        const newUser = yield userService_1.default.createUser(username, email, password);
+        const newUser = yield userService_1.default.createUser(username, email, password, role);
         if (!newUser) {
             return res.status(400).json({
                 message: "Erro ao criar usuário. Verifique se o nome de usuário já está em uso.",
             });
         }
-        return res.status(201).json({ message: "Usuário criado com sucesso" });
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error("Chave secreta JWT não definida");
+            return res.status(500).json({ message: "Erro interno do servidor: chave secreta ausente." });
+        }
+        const token = jsonwebtoken_1.default.sign({ userId: newUser.id, role: newUser.role }, secret, { expiresIn: "1h" });
+        return res.status(201).json({ token, user: newUser });
     }
     catch (error) {
         console.error("Erro ao criar usuário:", error);

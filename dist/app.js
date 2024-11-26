@@ -40,7 +40,7 @@ dotenv.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3001',
+    origin: ['http://localhost:3001', 'http://localhost:8081']
 }));
 app.use(express_1.default.json());
 app.get("/", (req, res) => {

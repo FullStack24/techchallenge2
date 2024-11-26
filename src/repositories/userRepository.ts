@@ -17,7 +17,8 @@ const UserRepository = {
         id: true,
         username: true,
         email: true,
-        password: true,
+        password: false,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -38,22 +39,39 @@ const UserRepository = {
     }) as Promise<IUser | null>;
   },
 
-  async createUser(username: string, email: string, password: string): Promise<IUser> {
+  async createUser(username: string, email: string, password: string, role: string): Promise<IUser> {
     return prisma.user.create({
       data: {
         username,
         email,
         password,
+        role,
       },
       select: {
         id: true,
         username: true,
         email: true,
+        role: true,
         password: true,
         createdAt: true,
         updatedAt: true,
       },
     }) as Promise<IUser>;
+  },
+
+  async updateUser(userId: string, userData: Partial<IUser>): Promise<IUser | null> {
+    return prisma.user.update({
+      where: { id: userId },
+      data: userData,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   },
 
   async findAll(): Promise<IUser[]> {
@@ -62,9 +80,16 @@ const UserRepository = {
       id: user.id,
       username: user.username,
       email: user.email,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));
+  },
+
+  async deleteUser(userId: string): Promise<void> {
+    await prisma.user.delete({
+      where: { id: userId },
+    });
   },
 };
 
