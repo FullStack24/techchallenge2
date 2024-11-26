@@ -23,7 +23,8 @@ const UserRepository = {
                     id: true,
                     username: true,
                     email: true,
-                    password: true,
+                    password: false,
+                    role: true,
                     createdAt: true,
                     updatedAt: true,
                 },
@@ -45,19 +46,37 @@ const UserRepository = {
             });
         });
     },
-    createUser(username, email, password) {
+    createUser(username, email, password, role) {
         return __awaiter(this, void 0, void 0, function* () {
             return prisma.user.create({
                 data: {
                     username,
                     email,
                     password,
+                    role,
                 },
                 select: {
                     id: true,
                     username: true,
                     email: true,
+                    role: true,
                     password: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            });
+        });
+    },
+    updateUser(userId, userData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return prisma.user.update({
+                where: { id: userId },
+                data: userData,
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    role: true,
                     createdAt: true,
                     updatedAt: true,
                 },
@@ -71,9 +90,17 @@ const UserRepository = {
                 id: user.id,
                 username: user.username,
                 email: user.email,
+                role: user.role,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             }));
+        });
+    },
+    deleteUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield prisma.user.delete({
+                where: { id: userId },
+            });
         });
     },
 };

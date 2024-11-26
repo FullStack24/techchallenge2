@@ -18,9 +18,10 @@ const CommentRepository = {
 
         const comment = await prisma.comment.create({
             data: {
-                postId: post_id, // Use post_id aqui
+                postId: post_id,
                 author,
                 content,
+                parentId: data.parent_id,
             },
         }) as PrismaComment;
 
@@ -30,6 +31,7 @@ const CommentRepository = {
             author: comment.author,
             content: comment.content,
             created_at: comment.createdAt.toISOString(),
+            parent_id: comment.parentId || undefined,
         };
     },
 
@@ -41,12 +43,14 @@ const CommentRepository = {
             author: comment.author,
             content: comment.content,
             created_at: comment.createdAt.toISOString(),
+            parent_id: comment.parentId || undefined,
         }));
     },
 
     async findById(id: string): Promise<IComment | null> {
         const comment = await prisma.comment.findUnique({
             where: { id },
+            include: { replies: true },
         }) as PrismaComment | null;
 
         if (!comment) return null;
@@ -57,12 +61,14 @@ const CommentRepository = {
             author: comment.author,
             content: comment.content,
             created_at: comment.createdAt.toISOString(),
+            parent_id: comment.parentId || undefined,
         };
     },
 
     async findByPostId(postId: string): Promise<IComment[]> {
         const comments = await prisma.comment.findMany({
-            where: { postId },
+            where: { postId, parentId: null },
+            include: { replies: true },
         });
 
         return comments.map(comment => ({
@@ -71,6 +77,15 @@ const CommentRepository = {
             author: comment.author,
             content: comment.content,
             created_at: comment.createdAt.toISOString(),
+            parent_id: comment.parentId || undefined,
+            replies: comment.replies.map(reply => ({
+                id: reply.id,
+                post_id: reply.postId,
+                author: reply.author,
+                content: reply.content,
+                created_at: reply.createdAt.toISOString(),
+                parent_id: reply.parentId || undefined,
+            }))
         }));
     },
 
@@ -93,6 +108,7 @@ const CommentRepository = {
             author: updatedComment.author,
             content: updatedComment.content,
             created_at: updatedComment.createdAt.toISOString(),
+            parent_id: updatedComment.parentId || undefined,
         };
     },
 
@@ -101,6 +117,37 @@ const CommentRepository = {
             where: { id },
         });
     },
+
+    async createReply(data: Omit<IComment, "id" | "created_at">): Promise<IComment> {
+        const { post_id, author, content, parent_id } = data;
+
+        const postExists = await prisma.post.findUnique({
+            where: { id: post_id },
+        });
+
+        if (!postExists) {
+            console.error(`Post com ID ${post_id} não encontrado`);
+            throw new Error("Post not found");
+        }
+
+        const comment = await prisma.comment.create({
+            data: {
+                postId: post_id,
+                author,
+                content,
+                parentId: parent_id,
+            },
+        }) as PrismaComment;
+
+        return {
+            id: comment.id,
+            post_id: comment.postId,
+            author: comment.author,
+            content: comment.content,
+            created_at: comment.createdAt.toISOString(),
+            parent_id: comment.parentId || undefined,
+        };
+    }
 };
 
 export default CommentRepository;

@@ -4,4 +4,5 @@ export interface IComment {
     author: string;
     content: string;
     created_at: string;
+    parent_id?: string;
 }

@@ -19,10 +19,16 @@ const validateUser = (email, password) => __awaiter(void 0, void 0, void 0, func
 const getUserById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     return userRepository_1.default.getUserById(userId);
 });
-const createUser = (username, email, password) => __awaiter(void 0, void 0, void 0, function* () {
-    return userRepository_1.default.createUser(username, email, password);
+const createUser = (username, email, password, role) => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.createUser(username, email, password, role);
+});
+const updateUser = (userId, userData) => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.updateUser(userId, userData);
 });
 const listAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     return userRepository_1.default.findAll();
 });
-exports.default = { validateUser, getUserById, createUser, listAllUsers };
+const deleteUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    return userRepository_1.default.deleteUser(userId);
+});
+exports.default = { validateUser, getUserById, createUser, listAllUsers, deleteUser, updateUser };

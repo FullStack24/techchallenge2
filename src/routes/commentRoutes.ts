@@ -4,6 +4,7 @@ import {
     getCommentsByPost,
     updateComment,
     deleteComment,
+    replyToComment,
 } from "../controllers/commentController";
 import authMiddleware from "../middlewares/authMiddleware";
 import {
@@ -30,5 +31,7 @@ router.put(
 );
 
 router.delete("/comments/:id", authMiddleware, deleteComment);
+
+router.post("/comments/:commentId/reply", authMiddleware, replyToComment);
 
 export default router;

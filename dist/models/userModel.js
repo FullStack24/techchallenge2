@@ -16,7 +16,7 @@ const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const prisma = new client_1.PrismaClient();
 class UserModel {
-    static create(username, email, password) {
+    static create(username, email, password, role) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
             yield prisma.user.create({
@@ -24,6 +24,7 @@ class UserModel {
                     username,
                     email,
                     password: hashedPassword,
+                    role,
                 },
             });
         });

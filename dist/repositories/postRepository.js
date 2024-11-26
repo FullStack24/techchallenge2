@@ -69,5 +69,53 @@ const PostRepository = {
             });
         });
     },
+    userLikedPost(userId, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const like = yield prisma.like.findUnique({
+                    where: {
+                        userId_postId: {
+                            userId,
+                            postId,
+                        },
+                    },
+                });
+                return like !== null;
+            }
+            catch (error) {
+                console.error("Error checking if user liked post:", error);
+                throw error;
+            }
+        });
+    },
+    addLike(userId, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield prisma.like.create({
+                data: {
+                    userId,
+                    postId,
+                },
+            });
+        });
+    },
+    incrementLikes(postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return prisma.post.update({
+                where: { id: postId },
+                data: {
+                    likes: {
+                        increment: 1,
+                    },
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    content: true,
+                    author: true,
+                    likes: true,
+                },
+            });
+        });
+    },
 };
 exports.default = PostRepository;

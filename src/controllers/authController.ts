@@ -11,10 +11,10 @@ const login = async (req: Request, res: Response) => {
     }
 
     const user = await userService.validateUser(email, password);
-    console.log("User found:", user); // Log para verificar se o usuário foi encontrado
+    console.log("User found:", user);
 
     if (!user) {
-      console.log("Invalid credentials for:", email); // Log de credenciais inválidas
+      console.log("Invalid credentials for:", email);
       return res.status(401).json({ message: "Credenciais inválidas" });
     }
 
@@ -24,7 +24,7 @@ const login = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Erro interno do servidor" });
     }
 
-    const token = jwt.sign({ userId: user.id }, secret, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user.id, role: user.role }, secret, { expiresIn: "1h" });
 
     return res.status(200).json({
       token,
@@ -62,7 +62,7 @@ const register = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Erro interno do servidor: chave secreta ausente." });
     }
 
-    const token = jwt.sign({ userId: newUser.id }, secret, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: newUser.id, role: newUser.role }, secret, { expiresIn: "1h" });
 
     return res.status(201).json({ token, user: newUser });
   } catch (error) {

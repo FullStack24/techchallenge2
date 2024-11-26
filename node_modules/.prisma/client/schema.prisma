@@ -15,6 +15,7 @@ model User {
   role      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  likes     Like[]   @relation("UserLikes")
 }
 
 model Post {
@@ -25,13 +26,29 @@ model Post {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   comments  Comment[] @relation("PostComments")
+  likes     Int       @default(0)
+  likesList Like[]    @relation("PostLikes")
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  post      Post     @relation("PostComments", fields: [postId], references: [id])
+  id        String    @id @default(uuid())
   postId    String
   author    String
   content   String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  parentId  String?
+  post      Post      @relation("PostComments", fields: [postId], references: [id])
+  parent    Comment?  @relation("CommentToReply", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentToReply")
+}
+
+model Like {
+  id     String @id @default(uuid())
+  userId String
+  postId String
+  user   User   @relation("UserLikes", fields: [userId], references: [id])
+  post   Post   @relation("PostLikes", fields: [postId], references: [id])
+
+  @@unique([userId, postId])
 }

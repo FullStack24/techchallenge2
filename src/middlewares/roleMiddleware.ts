@@ -21,8 +21,10 @@ const roleMiddleware = (roles: string[]) => {
 
         try {
             const decoded = jwt.verify(token, secret) as { userId: string; role: string };
+            console.log("Decoded Token in Role Middleware:", decoded);
 
             if (!roles.includes(decoded.role)) {
+                console.warn(`User with role ${decoded.role} tried to access a protected route.`);
                 return res.status(403).json({ message: "Acesso negado: Permissão insuficiente" });
             }
             next();

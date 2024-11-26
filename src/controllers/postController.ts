@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import PostService from "../services/postService";
+import {AuthenticatedRequest} from "../types/express";
 
 const createPost = async (req: Request, res: Response) => {
   const { title, content, author } = req.body;
@@ -80,6 +81,34 @@ const getAllPosts = async (req: Request, res: Response) => {
   }
 };
 
+const likePost = async (req: AuthenticatedRequest, res: Response) => {
+  const { postId } = req.params;
+
+  if (!req.user) {
+    console.log("User not authenticated.");
+    return res.status(401).json({ message: "Usuário não autenticado." });
+  }
+
+  const userId = req.user.id;
+  console.log("User ID:", userId);
+
+  try {
+    const alreadyLiked = await PostService.userLikedPost(userId, postId);
+    console.log("Already liked:", alreadyLiked);
+    if (alreadyLiked) {
+      return res.status(400).json({ message: "Você já curtiu este post." });
+    }
+
+    await PostService.addLike(userId, postId);
+    const post = await PostService.incrementLikes(postId);
+    console.log("Post after liking:", post);
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error("Erro ao dar like no post:", error);
+    return res.status(500).json({ message: "Erro ao dar like no post." });
+  }
+};
+
 export {
   createPost,
   getPostById,
@@ -87,4 +116,5 @@ export {
   deletePost,
   searchPosts,
   getAllPosts,
+  likePost
 };
