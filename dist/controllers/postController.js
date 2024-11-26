@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllPosts = exports.searchPosts = exports.deletePost = exports.updatePost = exports.getPostById = exports.createPost = void 0;
+exports.likePost = exports.getAllPosts = exports.searchPosts = exports.deletePost = exports.updatePost = exports.getPostById = exports.createPost = void 0;
 const postService_1 = __importDefault(require("../services/postService"));
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, content, author } = req.body;
@@ -99,3 +99,28 @@ const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getAllPosts = getAllPosts;
+const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { postId } = req.params;
+    if (!req.user) {
+        console.log("User not authenticated.");
+        return res.status(401).json({ message: "Usuário não autenticado." });
+    }
+    const userId = req.user.id;
+    console.log("User ID:", userId);
+    try {
+        const alreadyLiked = yield postService_1.default.userLikedPost(userId, postId);
+        console.log("Already liked:", alreadyLiked);
+        if (alreadyLiked) {
+            return res.status(400).json({ message: "Você já curtiu este post." });
+        }
+        yield postService_1.default.addLike(userId, postId);
+        const post = yield postService_1.default.incrementLikes(postId);
+        console.log("Post after liking:", post);
+        return res.status(200).json(post);
+    }
+    catch (error) {
+        console.error("Erro ao dar like no post:", error);
+        return res.status(500).json({ message: "Erro ao dar like no post." });
+    }
+});
+exports.likePost = likePost;

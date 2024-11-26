@@ -47,5 +47,20 @@ class PostService {
             return this.postRepository.search(keyword);
         });
     }
+    userLikedPost(userId, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.postRepository.userLikedPost(userId, postId);
+        });
+    }
+    addLike(userId, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.postRepository.addLike(userId, postId);
+        });
+    }
+    incrementLikes(postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.postRepository.incrementLikes(postId);
+        });
+    }
 }
 exports.default = new PostService(postRepository_1.default);
